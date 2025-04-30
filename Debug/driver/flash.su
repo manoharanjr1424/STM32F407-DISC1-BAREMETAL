@@ -1,0 +1,7 @@
+../driver/flash.c:3:9:Flash_Init	16	static
+../driver/flash.c:26:9:Write_to_Flash	40	static
+../driver/flash.c:67:9:Read_from_Flash	40	static
+../driver/flash.c:102:9:Flash_Erase_Sector	16	static
+../driver/flash.c:116:9:Check_Flash_Busy	4	static
+../driver/flash.c:120:9:Flash_Unlock	4	static
+../driver/flash.c:139:9:Flash_Lock	4	static

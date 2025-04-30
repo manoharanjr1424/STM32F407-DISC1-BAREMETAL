@@ -1,0 +1,8 @@
+../driver/gpio.c:10:9:GpioPortSet	1
+../driver/gpio.c:17:9:GpioPinSet	10
+../driver/gpio.c:77:9:GpioPinWrite	1
+../driver/gpio.c:83:9:GpioPinRead	1
+../driver/gpio.c:92:9:GpioPortWrite	1
+../driver/gpio.c:98:9:GpioPortRead	1
+../driver/gpio.c:104:9:GpioIntEnable	13
+../driver/gpio.c:154:9:GpioIntDisable	1

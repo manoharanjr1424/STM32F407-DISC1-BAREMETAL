@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "gpio_header.h": "c",
+        "base_header.h": "c",
+        "mcu.h": "c"
+    }
+}

@@ -1,0 +1,2 @@
+../driver/interrupt.c:11:9:NvicEnableInt	6
+../driver/interrupt.c:25:9:NvicDisableInt	6

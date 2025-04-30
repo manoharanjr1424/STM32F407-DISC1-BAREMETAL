@@ -1,0 +1,10 @@
+../driver/uart.c:11:21:uartInit	16	static
+../driver/uart.c:43:10:uartWrite	16	static
+../driver/uart.c:47:10:uartRead	16	static
+../driver/uart.c:51:9:uartSendChar	16	static
+../driver/uart.c:58:9:uartPheripheralEnable	16	static
+../driver/uart.c:68:21:enableSysPheripheral	16	static
+../driver/uart.c:82:6:uartCalculateBaurdRate	32	static
+../driver/uart.c:114:21:uartInterruptEnable	16	static
+../driver/uart.c:147:21:uartInterruptDisable	16	static
+../driver/uart.c:169:9:usartEnable	16	static

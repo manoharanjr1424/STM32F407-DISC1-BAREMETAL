@@ -1,0 +1,3199 @@
+
+BARE_METAL.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .isr_vector   00000188  08000000  08000000  00010000  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .text         0000156c  08000188  08000188  00010188  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .rodata       00000020  080016f4  080016f4  000116f4  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  3 .ARM.extab    00000000  08001714  08001714  0002005c  2**0
+                  CONTENTS
+  4 .ARM          00000000  08001714  08001714  0002005c  2**0
+                  CONTENTS
+  5 .preinit_array 00000000  08001714  08001714  0002005c  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  6 .init_array   00000004  08001714  08001714  00011714  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  7 .fini_array   00000004  08001718  08001718  00011718  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  8 .data         0000005c  20000000  0800171c  00020000  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  9 .ccmram       00000000  10000000  10000000  0002005c  2**0
+                  CONTENTS
+ 10 .bss          00000174  2000005c  2000005c  0002005c  2**2
+                  ALLOC
+ 11 ._user_heap_stack 00000600  200001d0  200001d0  0002005c  2**0
+                  ALLOC
+ 12 .ARM.attributes 00000030  00000000  00000000  0002005c  2**0
+                  CONTENTS, READONLY
+ 13 .comment      00000043  00000000  00000000  0002008c  2**0
+                  CONTENTS, READONLY
+ 14 .debug_info   00002779  00000000  00000000  000200cf  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 15 .debug_abbrev 00000ace  00000000  00000000  00022848  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 16 .debug_aranges 000002b0  00000000  00000000  00023318  2**3
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 17 .debug_rnglists 000001e0  00000000  00000000  000235c8  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 18 .debug_macro  00003653  00000000  00000000  000237a8  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 19 .debug_line   00003a56  00000000  00000000  00026dfb  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 20 .debug_str    0000b75d  00000000  00000000  0002a851  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 21 .debug_frame  00000f84  00000000  00000000  00035fb0  2**2
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 22 .debug_line_str 00000034  00000000  00000000  00036f34  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+
+Disassembly of section .text:
+
+08000188 <__do_global_dtors_aux>:
+ 8000188:	b510      	push	{r4, lr}
+ 800018a:	4c05      	ldr	r4, [pc, #20]	; (80001a0 <__do_global_dtors_aux+0x18>)
+ 800018c:	7823      	ldrb	r3, [r4, #0]
+ 800018e:	b933      	cbnz	r3, 800019e <__do_global_dtors_aux+0x16>
+ 8000190:	4b04      	ldr	r3, [pc, #16]	; (80001a4 <__do_global_dtors_aux+0x1c>)
+ 8000192:	b113      	cbz	r3, 800019a <__do_global_dtors_aux+0x12>
+ 8000194:	4804      	ldr	r0, [pc, #16]	; (80001a8 <__do_global_dtors_aux+0x20>)
+ 8000196:	f3af 8000 	nop.w
+ 800019a:	2301      	movs	r3, #1
+ 800019c:	7023      	strb	r3, [r4, #0]
+ 800019e:	bd10      	pop	{r4, pc}
+ 80001a0:	2000005c 	.word	0x2000005c
+ 80001a4:	00000000 	.word	0x00000000
+ 80001a8:	080016dc 	.word	0x080016dc
+
+080001ac <frame_dummy>:
+ 80001ac:	b508      	push	{r3, lr}
+ 80001ae:	4b03      	ldr	r3, [pc, #12]	; (80001bc <frame_dummy+0x10>)
+ 80001b0:	b11b      	cbz	r3, 80001ba <frame_dummy+0xe>
+ 80001b2:	4903      	ldr	r1, [pc, #12]	; (80001c0 <frame_dummy+0x14>)
+ 80001b4:	4803      	ldr	r0, [pc, #12]	; (80001c4 <frame_dummy+0x18>)
+ 80001b6:	f3af 8000 	nop.w
+ 80001ba:	bd08      	pop	{r3, pc}
+ 80001bc:	00000000 	.word	0x00000000
+ 80001c0:	20000060 	.word	0x20000060
+ 80001c4:	080016dc 	.word	0x080016dc
+
+080001c8 <main>:
+
+
+void uartPinInit(void);
+void UART4_IRQHandler(void);
+
+int main(void) {
+ 80001c8:	b580      	push	{r7, lr}
+ 80001ca:	b084      	sub	sp, #16
+ 80001cc:	af00      	add	r7, sp, #0
+
+
+	ENABLE_FPU();
+ 80001ce:	f000 fb25 	bl	800081c <SystemInit>
+	gpio_init();
+ 80001d2:	f000 f847 	bl	8000264 <gpio_init>
+	TimerInit(TIMER9);
+ 80001d6:	481e      	ldr	r0, [pc, #120]	; (8000250 <main+0x88>)
+ 80001d8:	f000 fb4a 	bl	8000870 <TimerInit>
+	GetSystemClockFrequency(0);
+ 80001dc:	2000      	movs	r0, #0
+ 80001de:	f000 faf5 	bl	80007cc <GetSystemClockFrequency>
+	uartPinInit();
+ 80001e2:	f000 f85b 	bl	800029c <uartPinInit>
+//	i2c.I2C_CCRValue = 0x50;
+//	i2c.I2C_TRISEValue = 17;
+
+//	I2C_Init(i2c);
+
+	uart.baudRate = 9600;
+ 80001e6:	f44f 5316 	mov.w	r3, #9600	; 0x2580
+ 80001ea:	607b      	str	r3, [r7, #4]
+	uart.usartBase = UART4;
+ 80001ec:	4b19      	ldr	r3, [pc, #100]	; (8000254 <main+0x8c>)
+ 80001ee:	603b      	str	r3, [r7, #0]
+	uart.overSampling = OVERSAMPLING_16;
+ 80001f0:	2300      	movs	r3, #0
+ 80001f2:	727b      	strb	r3, [r7, #9]
+	uart.parityBit = 0;
+ 80001f4:	2300      	movs	r3, #0
+ 80001f6:	72bb      	strb	r3, [r7, #10]
+	uart.stopBit = STOP_BIT_0;
+ 80001f8:	2300      	movs	r3, #0
+ 80001fa:	723b      	strb	r3, [r7, #8]
+	uart.wordLength = 0;
+ 80001fc:	2300      	movs	r3, #0
+ 80001fe:	737b      	strb	r3, [r7, #13]
+
+
+
+	uartInit(&uart);
+ 8000200:	463b      	mov	r3, r7
+ 8000202:	4618      	mov	r0, r3
+ 8000204:	f000 fbc0 	bl	8000988 <uartInit>
+	NvicEnableInt(UART4_IRQn);
+ 8000208:	2034      	movs	r0, #52	; 0x34
+ 800020a:	f000 fa99 	bl	8000740 <NvicEnableInt>
+	if ( uartInterruptEnable(UART4,RX_INTERRUPT) == USART_RX_INTERRUPT_NOT_ENABLED) {
+ 800020e:	2109      	movs	r1, #9
+ 8000210:	4810      	ldr	r0, [pc, #64]	; (8000254 <main+0x8c>)
+ 8000212:	f000 fd2b 	bl	8000c6c <uartInterruptEnable>
+ 8000216:	4603      	mov	r3, r0
+ 8000218:	2b0f      	cmp	r3, #15
+ 800021a:	d102      	bne.n	8000222 <main+0x5a>
+		printf("uart Interrupt was Not Enable\n");
+ 800021c:	480e      	ldr	r0, [pc, #56]	; (8000258 <main+0x90>)
+ 800021e:	f000 fec7 	bl	8000fb0 <puts>
+
+//	uartCalculateBaurdRate(9600,1);
+
+	while (1) {
+
+				data ^= 1;
+ 8000222:	4b0e      	ldr	r3, [pc, #56]	; (800025c <main+0x94>)
+ 8000224:	781b      	ldrb	r3, [r3, #0]
+ 8000226:	f083 0301 	eor.w	r3, r3, #1
+ 800022a:	b2da      	uxtb	r2, r3
+ 800022c:	4b0b      	ldr	r3, [pc, #44]	; (800025c <main+0x94>)
+ 800022e:	701a      	strb	r2, [r3, #0]
+				GpioPinWrite(GPIOD, 12, data);
+ 8000230:	4b0a      	ldr	r3, [pc, #40]	; (800025c <main+0x94>)
+ 8000232:	781b      	ldrb	r3, [r3, #0]
+ 8000234:	461a      	mov	r2, r3
+ 8000236:	210c      	movs	r1, #12
+ 8000238:	4809      	ldr	r0, [pc, #36]	; (8000260 <main+0x98>)
+ 800023a:	f000 fa61 	bl	8000700 <GpioPinWrite>
+				uartSendChar(UART4,'A');
+ 800023e:	2141      	movs	r1, #65	; 0x41
+ 8000240:	4804      	ldr	r0, [pc, #16]	; (8000254 <main+0x8c>)
+ 8000242:	f000 fbfb 	bl	8000a3c <uartSendChar>
+				MilliSecondsDelay(1000);
+ 8000246:	f44f 707a 	mov.w	r0, #1000	; 0x3e8
+ 800024a:	f000 fb55 	bl	80008f8 <MilliSecondsDelay>
+				data ^= 1;
+ 800024e:	e7e8      	b.n	8000222 <main+0x5a>
+ 8000250:	40014000 	.word	0x40014000
+ 8000254:	40004c00 	.word	0x40004c00
+ 8000258:	080016f4 	.word	0x080016f4
+ 800025c:	20000078 	.word	0x20000078
+ 8000260:	40020c00 	.word	0x40020c00
+
+08000264 <gpio_init>:
+//		}
+
+	}
+}
+
+uint8_t gpio_init(void) {
+ 8000264:	b580      	push	{r7, lr}
+ 8000266:	b084      	sub	sp, #16
+ 8000268:	af00      	add	r7, sp, #0
+
+	gpio_handler_t led_pin;
+
+	led_pin.mode = SET_PIN_OUTPUT;
+ 800026a:	2301      	movs	r3, #1
+ 800026c:	727b      	strb	r3, [r7, #9]
+	led_pin.pin = 12;
+ 800026e:	230c      	movs	r3, #12
+ 8000270:	723b      	strb	r3, [r7, #8]
+	led_pin.port = GPIOD;
+ 8000272:	4b09      	ldr	r3, [pc, #36]	; (8000298 <gpio_init+0x34>)
+ 8000274:	607b      	str	r3, [r7, #4]
+	led_pin.pull_up_down = 0;
+ 8000276:	2300      	movs	r3, #0
+ 8000278:	733b      	strb	r3, [r7, #12]
+	led_pin.output_type = 0;
+ 800027a:	2300      	movs	r3, #0
+ 800027c:	72bb      	strb	r3, [r7, #10]
+	led_pin.ouput_speed = 0;
+ 800027e:	2300      	movs	r3, #0
+ 8000280:	72fb      	strb	r3, [r7, #11]
+
+
+
+	GpioPinSet(led_pin);
+ 8000282:	1d3b      	adds	r3, r7, #4
+ 8000284:	e893 0007 	ldmia.w	r3, {r0, r1, r2}
+ 8000288:	f000 f94e 	bl	8000528 <GpioPinSet>
+//	GpioPinSet(switch_pin);
+//	GpioIntEnable(GPIOA,0,FALLINGEDGE);
+
+	return SUCCESS;
+ 800028c:	2300      	movs	r3, #0
+}
+ 800028e:	4618      	mov	r0, r3
+ 8000290:	3710      	adds	r7, #16
+ 8000292:	46bd      	mov	sp, r7
+ 8000294:	bd80      	pop	{r7, pc}
+ 8000296:	bf00      	nop
+ 8000298:	40020c00 	.word	0x40020c00
+
+0800029c <uartPinInit>:
+void delay_ms(uint32_t delay_ms) {
+	while (delay_ms--);
+}
+
+
+void uartPinInit(void) {
+ 800029c:	b580      	push	{r7, lr}
+ 800029e:	b086      	sub	sp, #24
+ 80002a0:	af00      	add	r7, sp, #0
+
+
+	gpio_handler_t rx,tx;
+
+	tx.mode = SET_PIN_ALTERNATIVE;
+ 80002a2:	2302      	movs	r3, #2
+ 80002a4:	717b      	strb	r3, [r7, #5]
+	rx.mode = SET_PIN_ALTERNATIVE;
+ 80002a6:	2302      	movs	r3, #2
+ 80002a8:	747b      	strb	r3, [r7, #17]
+
+	tx.pin = 10;
+ 80002aa:	230a      	movs	r3, #10
+ 80002ac:	713b      	strb	r3, [r7, #4]
+	rx.pin = 11;
+ 80002ae:	230b      	movs	r3, #11
+ 80002b0:	743b      	strb	r3, [r7, #16]
+
+	tx.Afmode = SET_PIN_AF8;
+ 80002b2:	2308      	movs	r3, #8
+ 80002b4:	72bb      	strb	r3, [r7, #10]
+	rx.Afmode = SET_PIN_AF8;
+ 80002b6:	2308      	movs	r3, #8
+ 80002b8:	75bb      	strb	r3, [r7, #22]
+
+	tx.port = GPIOC;
+ 80002ba:	4b0f      	ldr	r3, [pc, #60]	; (80002f8 <uartPinInit+0x5c>)
+ 80002bc:	603b      	str	r3, [r7, #0]
+	rx.port = GPIOC;
+ 80002be:	4b0e      	ldr	r3, [pc, #56]	; (80002f8 <uartPinInit+0x5c>)
+ 80002c0:	60fb      	str	r3, [r7, #12]
+
+	tx.pull_up_down = SET_PIN_NOPUPD;
+ 80002c2:	2300      	movs	r3, #0
+ 80002c4:	723b      	strb	r3, [r7, #8]
+	rx.pull_up_down = SET_PIN_NOPUPD;
+ 80002c6:	2300      	movs	r3, #0
+ 80002c8:	753b      	strb	r3, [r7, #20]
+
+	tx.output_type = 0;
+ 80002ca:	2300      	movs	r3, #0
+ 80002cc:	71bb      	strb	r3, [r7, #6]
+	rx.output_type = 0;
+ 80002ce:	2300      	movs	r3, #0
+ 80002d0:	74bb      	strb	r3, [r7, #18]
+
+	tx.ouput_speed = 0;
+ 80002d2:	2300      	movs	r3, #0
+ 80002d4:	71fb      	strb	r3, [r7, #7]
+	rx.ouput_speed = 0;
+ 80002d6:	2300      	movs	r3, #0
+ 80002d8:	74fb      	strb	r3, [r7, #19]
+
+	GpioPinSet(tx);
+ 80002da:	463b      	mov	r3, r7
+ 80002dc:	e893 0007 	ldmia.w	r3, {r0, r1, r2}
+ 80002e0:	f000 f922 	bl	8000528 <GpioPinSet>
+	GpioPinSet(rx);
+ 80002e4:	f107 030c 	add.w	r3, r7, #12
+ 80002e8:	e893 0007 	ldmia.w	r3, {r0, r1, r2}
+ 80002ec:	f000 f91c 	bl	8000528 <GpioPinSet>
+}
+ 80002f0:	bf00      	nop
+ 80002f2:	3718      	adds	r7, #24
+ 80002f4:	46bd      	mov	sp, r7
+ 80002f6:	bd80      	pop	{r7, pc}
+ 80002f8:	40020800 	.word	0x40020800
+
+080002fc <UART4_IRQHandler>:
+
+void UART4_IRQHandler(void) {
+ 80002fc:	b580      	push	{r7, lr}
+ 80002fe:	af00      	add	r7, sp, #0
+
+	uartInterruptDisable(UART4,RX_INTERRUPT);
+ 8000300:	2109      	movs	r1, #9
+ 8000302:	480c      	ldr	r0, [pc, #48]	; (8000334 <UART4_IRQHandler+0x38>)
+ 8000304:	f000 fcf0 	bl	8000ce8 <uartInterruptDisable>
+	while(! ( (UART4->SR) & (1 << 5)) );
+ 8000308:	bf00      	nop
+ 800030a:	4b0a      	ldr	r3, [pc, #40]	; (8000334 <UART4_IRQHandler+0x38>)
+ 800030c:	681b      	ldr	r3, [r3, #0]
+ 800030e:	f003 0320 	and.w	r3, r3, #32
+ 8000312:	2b00      	cmp	r3, #0
+ 8000314:	d0f9      	beq.n	800030a <UART4_IRQHandler+0xe>
+	uart_data = UART4->DR;
+ 8000316:	4b07      	ldr	r3, [pc, #28]	; (8000334 <UART4_IRQHandler+0x38>)
+ 8000318:	685b      	ldr	r3, [r3, #4]
+ 800031a:	b2da      	uxtb	r2, r3
+ 800031c:	4b06      	ldr	r3, [pc, #24]	; (8000338 <UART4_IRQHandler+0x3c>)
+ 800031e:	701a      	strb	r2, [r3, #0]
+	uartInterruptEnable(UART4,RX_INTERRUPT);
+ 8000320:	2109      	movs	r1, #9
+ 8000322:	4804      	ldr	r0, [pc, #16]	; (8000334 <UART4_IRQHandler+0x38>)
+ 8000324:	f000 fca2 	bl	8000c6c <uartInterruptEnable>
+	uart_data = 0;
+ 8000328:	4b03      	ldr	r3, [pc, #12]	; (8000338 <UART4_IRQHandler+0x3c>)
+ 800032a:	2200      	movs	r2, #0
+ 800032c:	701a      	strb	r2, [r3, #0]
+
+}
+ 800032e:	bf00      	nop
+ 8000330:	bd80      	pop	{r7, pc}
+ 8000332:	bf00      	nop
+ 8000334:	40004c00 	.word	0x40004c00
+ 8000338:	20000079 	.word	0x20000079
+
+0800033c <ITM_SendChar>:
+/* ITM register addresses */
+#define ITM_STIMULUS_PORT0   	*((volatile uint32_t*) 0xE0000000 )
+#define ITM_TRACE_EN          	*((volatile uint32_t*) 0xE0000E00 )
+
+void ITM_SendChar(uint8_t ch)
+{
+ 800033c:	b480      	push	{r7}
+ 800033e:	b083      	sub	sp, #12
+ 8000340:	af00      	add	r7, sp, #0
+ 8000342:	4603      	mov	r3, r0
+ 8000344:	71fb      	strb	r3, [r7, #7]
+
+	//Enable TRCENA
+	DEMCR |= ( 1 << 24);
+ 8000346:	4b0f      	ldr	r3, [pc, #60]	; (8000384 <ITM_SendChar+0x48>)
+ 8000348:	681b      	ldr	r3, [r3, #0]
+ 800034a:	4a0e      	ldr	r2, [pc, #56]	; (8000384 <ITM_SendChar+0x48>)
+ 800034c:	f043 7380 	orr.w	r3, r3, #16777216	; 0x1000000
+ 8000350:	6013      	str	r3, [r2, #0]
+
+	//enable stimulus port 0
+	ITM_TRACE_EN |= ( 1 << 0);
+ 8000352:	4b0d      	ldr	r3, [pc, #52]	; (8000388 <ITM_SendChar+0x4c>)
+ 8000354:	681b      	ldr	r3, [r3, #0]
+ 8000356:	4a0c      	ldr	r2, [pc, #48]	; (8000388 <ITM_SendChar+0x4c>)
+ 8000358:	f043 0301 	orr.w	r3, r3, #1
+ 800035c:	6013      	str	r3, [r2, #0]
+
+	// read FIFO status in bit [0]:
+	while(!(ITM_STIMULUS_PORT0 & 1));
+ 800035e:	bf00      	nop
+ 8000360:	f04f 4360 	mov.w	r3, #3758096384	; 0xe0000000
+ 8000364:	681b      	ldr	r3, [r3, #0]
+ 8000366:	f003 0301 	and.w	r3, r3, #1
+ 800036a:	2b00      	cmp	r3, #0
+ 800036c:	d0f8      	beq.n	8000360 <ITM_SendChar+0x24>
+
+	//Write to ITM stimulus port0
+	ITM_STIMULUS_PORT0 = ch;
+ 800036e:	f04f 4260 	mov.w	r2, #3758096384	; 0xe0000000
+ 8000372:	79fb      	ldrb	r3, [r7, #7]
+ 8000374:	6013      	str	r3, [r2, #0]
+}
+ 8000376:	bf00      	nop
+ 8000378:	370c      	adds	r7, #12
+ 800037a:	46bd      	mov	sp, r7
+ 800037c:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8000380:	4770      	bx	lr
+ 8000382:	bf00      	nop
+ 8000384:	e000edfc 	.word	0xe000edfc
+ 8000388:	e0000e00 	.word	0xe0000e00
+
+0800038c <_read>:
+  _kill(status, -1);
+  while (1) {}    /* Make sure we hang here */
+}
+
+__attribute__((weak)) int _read(int file, char *ptr, int len)
+{
+ 800038c:	b580      	push	{r7, lr}
+ 800038e:	b086      	sub	sp, #24
+ 8000390:	af00      	add	r7, sp, #0
+ 8000392:	60f8      	str	r0, [r7, #12]
+ 8000394:	60b9      	str	r1, [r7, #8]
+ 8000396:	607a      	str	r2, [r7, #4]
+  (void)file;
+  int DataIdx;
+
+  for (DataIdx = 0; DataIdx < len; DataIdx++)
+ 8000398:	2300      	movs	r3, #0
+ 800039a:	617b      	str	r3, [r7, #20]
+ 800039c:	e00a      	b.n	80003b4 <_read+0x28>
+  {
+    *ptr++ = __io_getchar();
+ 800039e:	f3af 8000 	nop.w
+ 80003a2:	4601      	mov	r1, r0
+ 80003a4:	68bb      	ldr	r3, [r7, #8]
+ 80003a6:	1c5a      	adds	r2, r3, #1
+ 80003a8:	60ba      	str	r2, [r7, #8]
+ 80003aa:	b2ca      	uxtb	r2, r1
+ 80003ac:	701a      	strb	r2, [r3, #0]
+  for (DataIdx = 0; DataIdx < len; DataIdx++)
+ 80003ae:	697b      	ldr	r3, [r7, #20]
+ 80003b0:	3301      	adds	r3, #1
+ 80003b2:	617b      	str	r3, [r7, #20]
+ 80003b4:	697a      	ldr	r2, [r7, #20]
+ 80003b6:	687b      	ldr	r3, [r7, #4]
+ 80003b8:	429a      	cmp	r2, r3
+ 80003ba:	dbf0      	blt.n	800039e <_read+0x12>
+  }
+
+  return len;
+ 80003bc:	687b      	ldr	r3, [r7, #4]
+}
+ 80003be:	4618      	mov	r0, r3
+ 80003c0:	3718      	adds	r7, #24
+ 80003c2:	46bd      	mov	sp, r7
+ 80003c4:	bd80      	pop	{r7, pc}
+
+080003c6 <_write>:
+
+__attribute__((weak)) int _write(int file, char *ptr, int len)
+{
+ 80003c6:	b580      	push	{r7, lr}
+ 80003c8:	b086      	sub	sp, #24
+ 80003ca:	af00      	add	r7, sp, #0
+ 80003cc:	60f8      	str	r0, [r7, #12]
+ 80003ce:	60b9      	str	r1, [r7, #8]
+ 80003d0:	607a      	str	r2, [r7, #4]
+  (void)file;
+  int DataIdx;
+
+  for (DataIdx = 0; DataIdx < len; DataIdx++)
+ 80003d2:	2300      	movs	r3, #0
+ 80003d4:	617b      	str	r3, [r7, #20]
+ 80003d6:	e009      	b.n	80003ec <_write+0x26>
+  {
+//    __io_putchar(*ptr++);
+
+	  ITM_SendChar(*ptr++);
+ 80003d8:	68bb      	ldr	r3, [r7, #8]
+ 80003da:	1c5a      	adds	r2, r3, #1
+ 80003dc:	60ba      	str	r2, [r7, #8]
+ 80003de:	781b      	ldrb	r3, [r3, #0]
+ 80003e0:	4618      	mov	r0, r3
+ 80003e2:	f7ff ffab 	bl	800033c <ITM_SendChar>
+  for (DataIdx = 0; DataIdx < len; DataIdx++)
+ 80003e6:	697b      	ldr	r3, [r7, #20]
+ 80003e8:	3301      	adds	r3, #1
+ 80003ea:	617b      	str	r3, [r7, #20]
+ 80003ec:	697a      	ldr	r2, [r7, #20]
+ 80003ee:	687b      	ldr	r3, [r7, #4]
+ 80003f0:	429a      	cmp	r2, r3
+ 80003f2:	dbf1      	blt.n	80003d8 <_write+0x12>
+  }
+  return len;
+ 80003f4:	687b      	ldr	r3, [r7, #4]
+}
+ 80003f6:	4618      	mov	r0, r3
+ 80003f8:	3718      	adds	r7, #24
+ 80003fa:	46bd      	mov	sp, r7
+ 80003fc:	bd80      	pop	{r7, pc}
+
+080003fe <_close>:
+
+int _close(int file)
+{
+ 80003fe:	b480      	push	{r7}
+ 8000400:	b083      	sub	sp, #12
+ 8000402:	af00      	add	r7, sp, #0
+ 8000404:	6078      	str	r0, [r7, #4]
+  (void)file;
+  return -1;
+ 8000406:	f04f 33ff 	mov.w	r3, #4294967295
+}
+ 800040a:	4618      	mov	r0, r3
+ 800040c:	370c      	adds	r7, #12
+ 800040e:	46bd      	mov	sp, r7
+ 8000410:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8000414:	4770      	bx	lr
+
+08000416 <_fstat>:
+
+
+int _fstat(int file, struct stat *st)
+{
+ 8000416:	b480      	push	{r7}
+ 8000418:	b083      	sub	sp, #12
+ 800041a:	af00      	add	r7, sp, #0
+ 800041c:	6078      	str	r0, [r7, #4]
+ 800041e:	6039      	str	r1, [r7, #0]
+  (void)file;
+  st->st_mode = S_IFCHR;
+ 8000420:	683b      	ldr	r3, [r7, #0]
+ 8000422:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 8000426:	605a      	str	r2, [r3, #4]
+  return 0;
+ 8000428:	2300      	movs	r3, #0
+}
+ 800042a:	4618      	mov	r0, r3
+ 800042c:	370c      	adds	r7, #12
+ 800042e:	46bd      	mov	sp, r7
+ 8000430:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8000434:	4770      	bx	lr
+
+08000436 <_isatty>:
+
+int _isatty(int file)
+{
+ 8000436:	b480      	push	{r7}
+ 8000438:	b083      	sub	sp, #12
+ 800043a:	af00      	add	r7, sp, #0
+ 800043c:	6078      	str	r0, [r7, #4]
+  (void)file;
+  return 1;
+ 800043e:	2301      	movs	r3, #1
+}
+ 8000440:	4618      	mov	r0, r3
+ 8000442:	370c      	adds	r7, #12
+ 8000444:	46bd      	mov	sp, r7
+ 8000446:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 800044a:	4770      	bx	lr
+
+0800044c <_lseek>:
+
+int _lseek(int file, int ptr, int dir)
+{
+ 800044c:	b480      	push	{r7}
+ 800044e:	b085      	sub	sp, #20
+ 8000450:	af00      	add	r7, sp, #0
+ 8000452:	60f8      	str	r0, [r7, #12]
+ 8000454:	60b9      	str	r1, [r7, #8]
+ 8000456:	607a      	str	r2, [r7, #4]
+  (void)file;
+  (void)ptr;
+  (void)dir;
+  return 0;
+ 8000458:	2300      	movs	r3, #0
+}
+ 800045a:	4618      	mov	r0, r3
+ 800045c:	3714      	adds	r7, #20
+ 800045e:	46bd      	mov	sp, r7
+ 8000460:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8000464:	4770      	bx	lr
+	...
+
+08000468 <_sbrk>:
+ * reserved size, please increase the '_Min_Stack_Size'.
+ *
+ * @param incr Memory size
+ * @return Pointer to allocated memory
+ */
+void* _sbrk(ptrdiff_t incr) {
+ 8000468:	b580      	push	{r7, lr}
+ 800046a:	b086      	sub	sp, #24
+ 800046c:	af00      	add	r7, sp, #0
+ 800046e:	6078      	str	r0, [r7, #4]
+	extern uint8_t _end; /* Symbol defined in the linker script */
+	extern uint8_t _estack; /* Symbol defined in the linker script */
+	extern uint32_t _Min_Stack_Size; /* Symbol defined in the linker script */
+	const uint32_t stack_limit = (uint32_t) &_estack
+ 8000470:	4a14      	ldr	r2, [pc, #80]	; (80004c4 <_sbrk+0x5c>)
+			- (uint32_t) &_Min_Stack_Size;
+ 8000472:	4b15      	ldr	r3, [pc, #84]	; (80004c8 <_sbrk+0x60>)
+	const uint32_t stack_limit = (uint32_t) &_estack
+ 8000474:	1ad3      	subs	r3, r2, r3
+ 8000476:	617b      	str	r3, [r7, #20]
+	const uint8_t *max_heap = (uint8_t*) stack_limit;
+ 8000478:	697b      	ldr	r3, [r7, #20]
+ 800047a:	613b      	str	r3, [r7, #16]
+	uint8_t *prev_heap_end;
+
+	/* Initialize heap end at first call */
+	if (NULL == __sbrk_heap_end) {
+ 800047c:	4b13      	ldr	r3, [pc, #76]	; (80004cc <_sbrk+0x64>)
+ 800047e:	681b      	ldr	r3, [r3, #0]
+ 8000480:	2b00      	cmp	r3, #0
+ 8000482:	d102      	bne.n	800048a <_sbrk+0x22>
+		__sbrk_heap_end = &_end;
+ 8000484:	4b11      	ldr	r3, [pc, #68]	; (80004cc <_sbrk+0x64>)
+ 8000486:	4a12      	ldr	r2, [pc, #72]	; (80004d0 <_sbrk+0x68>)
+ 8000488:	601a      	str	r2, [r3, #0]
+	}
+
+	/* Protect heap from growing into the reserved MSP stack */
+	if (__sbrk_heap_end + incr > max_heap) {
+ 800048a:	4b10      	ldr	r3, [pc, #64]	; (80004cc <_sbrk+0x64>)
+ 800048c:	681a      	ldr	r2, [r3, #0]
+ 800048e:	687b      	ldr	r3, [r7, #4]
+ 8000490:	4413      	add	r3, r2
+ 8000492:	693a      	ldr	r2, [r7, #16]
+ 8000494:	429a      	cmp	r2, r3
+ 8000496:	d207      	bcs.n	80004a8 <_sbrk+0x40>
+		errno = ENOMEM;
+ 8000498:	f000 feb8 	bl	800120c <__errno>
+ 800049c:	4603      	mov	r3, r0
+ 800049e:	220c      	movs	r2, #12
+ 80004a0:	601a      	str	r2, [r3, #0]
+		return (void*) -1;
+ 80004a2:	f04f 33ff 	mov.w	r3, #4294967295
+ 80004a6:	e009      	b.n	80004bc <_sbrk+0x54>
+	}
+
+	prev_heap_end = __sbrk_heap_end;
+ 80004a8:	4b08      	ldr	r3, [pc, #32]	; (80004cc <_sbrk+0x64>)
+ 80004aa:	681b      	ldr	r3, [r3, #0]
+ 80004ac:	60fb      	str	r3, [r7, #12]
+	__sbrk_heap_end += incr;
+ 80004ae:	4b07      	ldr	r3, [pc, #28]	; (80004cc <_sbrk+0x64>)
+ 80004b0:	681a      	ldr	r2, [r3, #0]
+ 80004b2:	687b      	ldr	r3, [r7, #4]
+ 80004b4:	4413      	add	r3, r2
+ 80004b6:	4a05      	ldr	r2, [pc, #20]	; (80004cc <_sbrk+0x64>)
+ 80004b8:	6013      	str	r3, [r2, #0]
+
+	return (void*) prev_heap_end;
+ 80004ba:	68fb      	ldr	r3, [r7, #12]
+}
+ 80004bc:	4618      	mov	r0, r3
+ 80004be:	3718      	adds	r7, #24
+ 80004c0:	46bd      	mov	sp, r7
+ 80004c2:	bd80      	pop	{r7, pc}
+ 80004c4:	20020000 	.word	0x20020000
+ 80004c8:	00000400 	.word	0x00000400
+ 80004cc:	2000007c 	.word	0x2000007c
+ 80004d0:	200001d0 	.word	0x200001d0
+
+080004d4 <Reset_Handler>:
+
+  .section .text.Reset_Handler
+  .weak Reset_Handler
+  .type Reset_Handler, %function
+Reset_Handler:
+  ldr   r0, =_estack
+ 80004d4:	480d      	ldr	r0, [pc, #52]	; (800050c <LoopForever+0x2>)
+  mov   sp, r0          /* set stack pointer */
+ 80004d6:	4685      	mov	sp, r0
+/* Call the clock system initialization function.*/
+  bl  SystemInit
+ 80004d8:	f000 f9a0 	bl	800081c <SystemInit>
+
+/* Copy the data segment initializers from flash to SRAM */
+  ldr r0, =_sdata
+ 80004dc:	480c      	ldr	r0, [pc, #48]	; (8000510 <LoopForever+0x6>)
+  ldr r1, =_edata
+ 80004de:	490d      	ldr	r1, [pc, #52]	; (8000514 <LoopForever+0xa>)
+  ldr r2, =_sidata
+ 80004e0:	4a0d      	ldr	r2, [pc, #52]	; (8000518 <LoopForever+0xe>)
+  movs r3, #0
+ 80004e2:	2300      	movs	r3, #0
+  b LoopCopyDataInit
+ 80004e4:	e002      	b.n	80004ec <LoopCopyDataInit>
+
+080004e6 <CopyDataInit>:
+
+CopyDataInit:
+  ldr r4, [r2, r3]
+ 80004e6:	58d4      	ldr	r4, [r2, r3]
+  str r4, [r0, r3]
+ 80004e8:	50c4      	str	r4, [r0, r3]
+  adds r3, r3, #4
+ 80004ea:	3304      	adds	r3, #4
+
+080004ec <LoopCopyDataInit>:
+
+LoopCopyDataInit:
+  adds r4, r0, r3
+ 80004ec:	18c4      	adds	r4, r0, r3
+  cmp r4, r1
+ 80004ee:	428c      	cmp	r4, r1
+  bcc CopyDataInit
+ 80004f0:	d3f9      	bcc.n	80004e6 <CopyDataInit>
+
+/* Zero fill the bss segment. */
+  ldr r2, =_sbss
+ 80004f2:	4a0a      	ldr	r2, [pc, #40]	; (800051c <LoopForever+0x12>)
+  ldr r4, =_ebss
+ 80004f4:	4c0a      	ldr	r4, [pc, #40]	; (8000520 <LoopForever+0x16>)
+  movs r3, #0
+ 80004f6:	2300      	movs	r3, #0
+  b LoopFillZerobss
+ 80004f8:	e001      	b.n	80004fe <LoopFillZerobss>
+
+080004fa <FillZerobss>:
+
+FillZerobss:
+  str  r3, [r2]
+ 80004fa:	6013      	str	r3, [r2, #0]
+  adds r2, r2, #4
+ 80004fc:	3204      	adds	r2, #4
+
+080004fe <LoopFillZerobss>:
+
+LoopFillZerobss:
+  cmp r2, r4
+ 80004fe:	42a2      	cmp	r2, r4
+  bcc FillZerobss
+ 8000500:	d3fb      	bcc.n	80004fa <FillZerobss>
+
+/* Call static constructors */
+  bl __libc_init_array
+ 8000502:	f000 fe89 	bl	8001218 <__libc_init_array>
+/* Call the application's entry point.*/
+  bl main
+ 8000506:	f7ff fe5f 	bl	80001c8 <main>
+
+0800050a <LoopForever>:
+
+LoopForever:
+  b LoopForever
+ 800050a:	e7fe      	b.n	800050a <LoopForever>
+  ldr   r0, =_estack
+ 800050c:	20020000 	.word	0x20020000
+  ldr r0, =_sdata
+ 8000510:	20000000 	.word	0x20000000
+  ldr r1, =_edata
+ 8000514:	2000005c 	.word	0x2000005c
+  ldr r2, =_sidata
+ 8000518:	0800171c 	.word	0x0800171c
+  ldr r2, =_sbss
+ 800051c:	2000005c 	.word	0x2000005c
+  ldr r4, =_ebss
+ 8000520:	200001d0 	.word	0x200001d0
+
+08000524 <ADC_IRQHandler>:
+ * @retval : None
+*/
+  .section .text.Default_Handler,"ax",%progbits
+Default_Handler:
+Infinite_Loop:
+  b Infinite_Loop
+ 8000524:	e7fe      	b.n	8000524 <ADC_IRQHandler>
+	...
+
+08000528 <GpioPinSet>:
+	port->MODER &= ~(0xFFFFFFFF);
+	port->MODER = data;
+	return SUCCESS;
+}
+
+uint8_t GpioPinSet(gpio_handler_t data) {
+ 8000528:	b480      	push	{r7}
+ 800052a:	b085      	sub	sp, #20
+ 800052c:	af00      	add	r7, sp, #0
+ 800052e:	1d3b      	adds	r3, r7, #4
+ 8000530:	e883 0007 	stmia.w	r3, {r0, r1, r2}
+
+	if (data.port == GPIOA) {
+ 8000534:	687b      	ldr	r3, [r7, #4]
+ 8000536:	4a6b      	ldr	r2, [pc, #428]	; (80006e4 <GpioPinSet+0x1bc>)
+ 8000538:	4293      	cmp	r3, r2
+ 800053a:	d106      	bne.n	800054a <GpioPinSet+0x22>
+
+		GPIOAEN;
+ 800053c:	4b6a      	ldr	r3, [pc, #424]	; (80006e8 <GpioPinSet+0x1c0>)
+ 800053e:	6b1b      	ldr	r3, [r3, #48]	; 0x30
+ 8000540:	4a69      	ldr	r2, [pc, #420]	; (80006e8 <GpioPinSet+0x1c0>)
+ 8000542:	f043 0301 	orr.w	r3, r3, #1
+ 8000546:	6313      	str	r3, [r2, #48]	; 0x30
+ 8000548:	e035      	b.n	80005b6 <GpioPinSet+0x8e>
+
+	} else if (data.port == GPIOB) {
+ 800054a:	687b      	ldr	r3, [r7, #4]
+ 800054c:	4a67      	ldr	r2, [pc, #412]	; (80006ec <GpioPinSet+0x1c4>)
+ 800054e:	4293      	cmp	r3, r2
+ 8000550:	d106      	bne.n	8000560 <GpioPinSet+0x38>
+
+		GPIOBEN;
+ 8000552:	4b65      	ldr	r3, [pc, #404]	; (80006e8 <GpioPinSet+0x1c0>)
+ 8000554:	6b1b      	ldr	r3, [r3, #48]	; 0x30
+ 8000556:	4a64      	ldr	r2, [pc, #400]	; (80006e8 <GpioPinSet+0x1c0>)
+ 8000558:	f043 0302 	orr.w	r3, r3, #2
+ 800055c:	6313      	str	r3, [r2, #48]	; 0x30
+ 800055e:	e02a      	b.n	80005b6 <GpioPinSet+0x8e>
+
+	} else if (data.port == GPIOC) {
+ 8000560:	687b      	ldr	r3, [r7, #4]
+ 8000562:	4a63      	ldr	r2, [pc, #396]	; (80006f0 <GpioPinSet+0x1c8>)
+ 8000564:	4293      	cmp	r3, r2
+ 8000566:	d106      	bne.n	8000576 <GpioPinSet+0x4e>
+
+		GPIOCEN;
+ 8000568:	4b5f      	ldr	r3, [pc, #380]	; (80006e8 <GpioPinSet+0x1c0>)
+ 800056a:	6b1b      	ldr	r3, [r3, #48]	; 0x30
+ 800056c:	4a5e      	ldr	r2, [pc, #376]	; (80006e8 <GpioPinSet+0x1c0>)
+ 800056e:	f043 0304 	orr.w	r3, r3, #4
+ 8000572:	6313      	str	r3, [r2, #48]	; 0x30
+ 8000574:	e01f      	b.n	80005b6 <GpioPinSet+0x8e>
+
+	} else if (data.port == GPIOD) {
+ 8000576:	687b      	ldr	r3, [r7, #4]
+ 8000578:	4a5e      	ldr	r2, [pc, #376]	; (80006f4 <GpioPinSet+0x1cc>)
+ 800057a:	4293      	cmp	r3, r2
+ 800057c:	d106      	bne.n	800058c <GpioPinSet+0x64>
+
+		GPIODEN;
+ 800057e:	4b5a      	ldr	r3, [pc, #360]	; (80006e8 <GpioPinSet+0x1c0>)
+ 8000580:	6b1b      	ldr	r3, [r3, #48]	; 0x30
+ 8000582:	4a59      	ldr	r2, [pc, #356]	; (80006e8 <GpioPinSet+0x1c0>)
+ 8000584:	f043 0308 	orr.w	r3, r3, #8
+ 8000588:	6313      	str	r3, [r2, #48]	; 0x30
+ 800058a:	e014      	b.n	80005b6 <GpioPinSet+0x8e>
+
+	} else if (data.port == GPIOE) {
+ 800058c:	687b      	ldr	r3, [r7, #4]
+ 800058e:	4a5a      	ldr	r2, [pc, #360]	; (80006f8 <GpioPinSet+0x1d0>)
+ 8000590:	4293      	cmp	r3, r2
+ 8000592:	d106      	bne.n	80005a2 <GpioPinSet+0x7a>
+
+		GPIOEEN;
+ 8000594:	4b54      	ldr	r3, [pc, #336]	; (80006e8 <GpioPinSet+0x1c0>)
+ 8000596:	6b1b      	ldr	r3, [r3, #48]	; 0x30
+ 8000598:	4a53      	ldr	r2, [pc, #332]	; (80006e8 <GpioPinSet+0x1c0>)
+ 800059a:	f043 0310 	orr.w	r3, r3, #16
+ 800059e:	6313      	str	r3, [r2, #48]	; 0x30
+ 80005a0:	e009      	b.n	80005b6 <GpioPinSet+0x8e>
+
+	} else if (data.port == GPIOF) {
+ 80005a2:	687b      	ldr	r3, [r7, #4]
+ 80005a4:	4a55      	ldr	r2, [pc, #340]	; (80006fc <GpioPinSet+0x1d4>)
+ 80005a6:	4293      	cmp	r3, r2
+ 80005a8:	d105      	bne.n	80005b6 <GpioPinSet+0x8e>
+
+		GPIOFEN;
+ 80005aa:	4b4f      	ldr	r3, [pc, #316]	; (80006e8 <GpioPinSet+0x1c0>)
+ 80005ac:	6b1b      	ldr	r3, [r3, #48]	; 0x30
+ 80005ae:	4a4e      	ldr	r2, [pc, #312]	; (80006e8 <GpioPinSet+0x1c0>)
+ 80005b0:	f043 0320 	orr.w	r3, r3, #32
+ 80005b4:	6313      	str	r3, [r2, #48]	; 0x30
+	}
+
+
+	data.port->MODER &= ~(3 << (data.pin * 2));
+ 80005b6:	687b      	ldr	r3, [r7, #4]
+ 80005b8:	681a      	ldr	r2, [r3, #0]
+ 80005ba:	7a3b      	ldrb	r3, [r7, #8]
+ 80005bc:	005b      	lsls	r3, r3, #1
+ 80005be:	2103      	movs	r1, #3
+ 80005c0:	fa01 f303 	lsl.w	r3, r1, r3
+ 80005c4:	43db      	mvns	r3, r3
+ 80005c6:	4619      	mov	r1, r3
+ 80005c8:	687b      	ldr	r3, [r7, #4]
+ 80005ca:	400a      	ands	r2, r1
+ 80005cc:	601a      	str	r2, [r3, #0]
+	data.port->MODER |= (data.mode << (data.pin * 2));
+ 80005ce:	687b      	ldr	r3, [r7, #4]
+ 80005d0:	681a      	ldr	r2, [r3, #0]
+ 80005d2:	7a7b      	ldrb	r3, [r7, #9]
+ 80005d4:	4619      	mov	r1, r3
+ 80005d6:	7a3b      	ldrb	r3, [r7, #8]
+ 80005d8:	005b      	lsls	r3, r3, #1
+ 80005da:	fa01 f303 	lsl.w	r3, r1, r3
+ 80005de:	4619      	mov	r1, r3
+ 80005e0:	687b      	ldr	r3, [r7, #4]
+ 80005e2:	430a      	orrs	r2, r1
+ 80005e4:	601a      	str	r2, [r3, #0]
+
+	data.port->OTYPER &= ~(1 << data.pin);
+ 80005e6:	687b      	ldr	r3, [r7, #4]
+ 80005e8:	685a      	ldr	r2, [r3, #4]
+ 80005ea:	7a3b      	ldrb	r3, [r7, #8]
+ 80005ec:	4619      	mov	r1, r3
+ 80005ee:	2301      	movs	r3, #1
+ 80005f0:	408b      	lsls	r3, r1
+ 80005f2:	43db      	mvns	r3, r3
+ 80005f4:	4619      	mov	r1, r3
+ 80005f6:	687b      	ldr	r3, [r7, #4]
+ 80005f8:	400a      	ands	r2, r1
+ 80005fa:	605a      	str	r2, [r3, #4]
+	data.port->OTYPER = (data.output_type << data.pin);
+ 80005fc:	7abb      	ldrb	r3, [r7, #10]
+ 80005fe:	461a      	mov	r2, r3
+ 8000600:	7a3b      	ldrb	r3, [r7, #8]
+ 8000602:	409a      	lsls	r2, r3
+ 8000604:	687b      	ldr	r3, [r7, #4]
+ 8000606:	605a      	str	r2, [r3, #4]
+
+	data.port->PUPDR &= ~(3 << (data.pin * 2));
+ 8000608:	687b      	ldr	r3, [r7, #4]
+ 800060a:	68da      	ldr	r2, [r3, #12]
+ 800060c:	7a3b      	ldrb	r3, [r7, #8]
+ 800060e:	005b      	lsls	r3, r3, #1
+ 8000610:	2103      	movs	r1, #3
+ 8000612:	fa01 f303 	lsl.w	r3, r1, r3
+ 8000616:	43db      	mvns	r3, r3
+ 8000618:	4619      	mov	r1, r3
+ 800061a:	687b      	ldr	r3, [r7, #4]
+ 800061c:	400a      	ands	r2, r1
+ 800061e:	60da      	str	r2, [r3, #12]
+	data.port->PUPDR = (data.pull_up_down << (data.pin * 2));
+ 8000620:	7b3b      	ldrb	r3, [r7, #12]
+ 8000622:	461a      	mov	r2, r3
+ 8000624:	7a3b      	ldrb	r3, [r7, #8]
+ 8000626:	005b      	lsls	r3, r3, #1
+ 8000628:	409a      	lsls	r2, r3
+ 800062a:	687b      	ldr	r3, [r7, #4]
+ 800062c:	60da      	str	r2, [r3, #12]
+
+	data.port->OSPEEDR &= ~(3 << (data.pin * 2));
+ 800062e:	687b      	ldr	r3, [r7, #4]
+ 8000630:	689a      	ldr	r2, [r3, #8]
+ 8000632:	7a3b      	ldrb	r3, [r7, #8]
+ 8000634:	005b      	lsls	r3, r3, #1
+ 8000636:	2103      	movs	r1, #3
+ 8000638:	fa01 f303 	lsl.w	r3, r1, r3
+ 800063c:	43db      	mvns	r3, r3
+ 800063e:	4619      	mov	r1, r3
+ 8000640:	687b      	ldr	r3, [r7, #4]
+ 8000642:	400a      	ands	r2, r1
+ 8000644:	609a      	str	r2, [r3, #8]
+	data.port->OSPEEDR |= (data.ouput_speed << data.pin);
+ 8000646:	687b      	ldr	r3, [r7, #4]
+ 8000648:	689a      	ldr	r2, [r3, #8]
+ 800064a:	7afb      	ldrb	r3, [r7, #11]
+ 800064c:	4619      	mov	r1, r3
+ 800064e:	7a3b      	ldrb	r3, [r7, #8]
+ 8000650:	fa01 f303 	lsl.w	r3, r1, r3
+ 8000654:	4619      	mov	r1, r3
+ 8000656:	687b      	ldr	r3, [r7, #4]
+ 8000658:	430a      	orrs	r2, r1
+ 800065a:	609a      	str	r2, [r3, #8]
+
+
+	if(data.mode == SET_PIN_ALTERNATIVE)  {
+ 800065c:	7a7b      	ldrb	r3, [r7, #9]
+ 800065e:	2b02      	cmp	r3, #2
+ 8000660:	d138      	bne.n	80006d4 <GpioPinSet+0x1ac>
+
+		if (data.Afmode < 8) {
+ 8000662:	7bbb      	ldrb	r3, [r7, #14]
+ 8000664:	2b07      	cmp	r3, #7
+ 8000666:	d818      	bhi.n	800069a <GpioPinSet+0x172>
+			data.port->AFRL &= ~(0xF << (data.pin * 4));
+ 8000668:	687b      	ldr	r3, [r7, #4]
+ 800066a:	6a1a      	ldr	r2, [r3, #32]
+ 800066c:	7a3b      	ldrb	r3, [r7, #8]
+ 800066e:	009b      	lsls	r3, r3, #2
+ 8000670:	210f      	movs	r1, #15
+ 8000672:	fa01 f303 	lsl.w	r3, r1, r3
+ 8000676:	43db      	mvns	r3, r3
+ 8000678:	4619      	mov	r1, r3
+ 800067a:	687b      	ldr	r3, [r7, #4]
+ 800067c:	400a      	ands	r2, r1
+ 800067e:	621a      	str	r2, [r3, #32]
+			data.port->AFRL |=  (data.Afmode << (data.pin * 4) );
+ 8000680:	687b      	ldr	r3, [r7, #4]
+ 8000682:	6a1a      	ldr	r2, [r3, #32]
+ 8000684:	7bbb      	ldrb	r3, [r7, #14]
+ 8000686:	4619      	mov	r1, r3
+ 8000688:	7a3b      	ldrb	r3, [r7, #8]
+ 800068a:	009b      	lsls	r3, r3, #2
+ 800068c:	fa01 f303 	lsl.w	r3, r1, r3
+ 8000690:	4619      	mov	r1, r3
+ 8000692:	687b      	ldr	r3, [r7, #4]
+ 8000694:	430a      	orrs	r2, r1
+ 8000696:	621a      	str	r2, [r3, #32]
+ 8000698:	e01c      	b.n	80006d4 <GpioPinSet+0x1ac>
+		} else if ( data.Afmode < 16 ) {
+ 800069a:	7bbb      	ldrb	r3, [r7, #14]
+ 800069c:	2b0f      	cmp	r3, #15
+ 800069e:	d819      	bhi.n	80006d4 <GpioPinSet+0x1ac>
+			data.port->AFRH &= ~(0xF << ((data.pin - 8) * 4)  );
+ 80006a0:	687b      	ldr	r3, [r7, #4]
+ 80006a2:	6a5a      	ldr	r2, [r3, #36]	; 0x24
+ 80006a4:	7a3b      	ldrb	r3, [r7, #8]
+ 80006a6:	3b08      	subs	r3, #8
+ 80006a8:	009b      	lsls	r3, r3, #2
+ 80006aa:	210f      	movs	r1, #15
+ 80006ac:	fa01 f303 	lsl.w	r3, r1, r3
+ 80006b0:	43db      	mvns	r3, r3
+ 80006b2:	4619      	mov	r1, r3
+ 80006b4:	687b      	ldr	r3, [r7, #4]
+ 80006b6:	400a      	ands	r2, r1
+ 80006b8:	625a      	str	r2, [r3, #36]	; 0x24
+			data.port->AFRH |=  (data.Afmode << ((data.pin - 8)*4) );
+ 80006ba:	687b      	ldr	r3, [r7, #4]
+ 80006bc:	6a5a      	ldr	r2, [r3, #36]	; 0x24
+ 80006be:	7bbb      	ldrb	r3, [r7, #14]
+ 80006c0:	4619      	mov	r1, r3
+ 80006c2:	7a3b      	ldrb	r3, [r7, #8]
+ 80006c4:	3b08      	subs	r3, #8
+ 80006c6:	009b      	lsls	r3, r3, #2
+ 80006c8:	fa01 f303 	lsl.w	r3, r1, r3
+ 80006cc:	4619      	mov	r1, r3
+ 80006ce:	687b      	ldr	r3, [r7, #4]
+ 80006d0:	430a      	orrs	r2, r1
+ 80006d2:	625a      	str	r2, [r3, #36]	; 0x24
+	else if(data.mode == SET_PIN_ANALOG) {
+
+
+	}
+
+	return SUCCESS;
+ 80006d4:	2300      	movs	r3, #0
+
+}
+ 80006d6:	4618      	mov	r0, r3
+ 80006d8:	3714      	adds	r7, #20
+ 80006da:	46bd      	mov	sp, r7
+ 80006dc:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 80006e0:	4770      	bx	lr
+ 80006e2:	bf00      	nop
+ 80006e4:	40020000 	.word	0x40020000
+ 80006e8:	40023800 	.word	0x40023800
+ 80006ec:	40020400 	.word	0x40020400
+ 80006f0:	40020800 	.word	0x40020800
+ 80006f4:	40020c00 	.word	0x40020c00
+ 80006f8:	40021000 	.word	0x40021000
+ 80006fc:	40021400 	.word	0x40021400
+
+08000700 <GpioPinWrite>:
+
+uint8_t GpioPinWrite(gpio_register_t *port, uint8_t pinNumber, uint8_t data) {
+ 8000700:	b480      	push	{r7}
+ 8000702:	b083      	sub	sp, #12
+ 8000704:	af00      	add	r7, sp, #0
+ 8000706:	6078      	str	r0, [r7, #4]
+ 8000708:	460b      	mov	r3, r1
+ 800070a:	70fb      	strb	r3, [r7, #3]
+ 800070c:	4613      	mov	r3, r2
+ 800070e:	70bb      	strb	r3, [r7, #2]
+		port->ODR &= ~(1 << pinNumber);
+ 8000710:	687b      	ldr	r3, [r7, #4]
+ 8000712:	695b      	ldr	r3, [r3, #20]
+ 8000714:	78fa      	ldrb	r2, [r7, #3]
+ 8000716:	2101      	movs	r1, #1
+ 8000718:	fa01 f202 	lsl.w	r2, r1, r2
+ 800071c:	43d2      	mvns	r2, r2
+ 800071e:	401a      	ands	r2, r3
+ 8000720:	687b      	ldr	r3, [r7, #4]
+ 8000722:	615a      	str	r2, [r3, #20]
+		port->ODR = (data << pinNumber);
+ 8000724:	78ba      	ldrb	r2, [r7, #2]
+ 8000726:	78fb      	ldrb	r3, [r7, #3]
+ 8000728:	fa02 f303 	lsl.w	r3, r2, r3
+ 800072c:	461a      	mov	r2, r3
+ 800072e:	687b      	ldr	r3, [r7, #4]
+ 8000730:	615a      	str	r2, [r3, #20]
+		return SUCCESS;
+ 8000732:	2300      	movs	r3, #0
+}
+ 8000734:	4618      	mov	r0, r3
+ 8000736:	370c      	adds	r7, #12
+ 8000738:	46bd      	mov	sp, r7
+ 800073a:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 800073e:	4770      	bx	lr
+
+08000740 <NvicEnableInt>:
+ */
+
+#include <mcu.h>
+#include <interrupt.h>
+
+uint8_t NvicEnableInt(uint8_t IntNumber) {
+ 8000740:	b480      	push	{r7}
+ 8000742:	b083      	sub	sp, #12
+ 8000744:	af00      	add	r7, sp, #0
+ 8000746:	4603      	mov	r3, r0
+ 8000748:	71fb      	strb	r3, [r7, #7]
+
+	if( (IntNumber >=0) && (IntNumber < 32) ) {
+ 800074a:	79fb      	ldrb	r3, [r7, #7]
+ 800074c:	2b1f      	cmp	r3, #31
+ 800074e:	d80a      	bhi.n	8000766 <NvicEnableInt+0x26>
+		(*NVIC_ISER0) |= (1 << IntNumber);
+ 8000750:	4b1b      	ldr	r3, [pc, #108]	; (80007c0 <NvicEnableInt+0x80>)
+ 8000752:	681b      	ldr	r3, [r3, #0]
+ 8000754:	79fa      	ldrb	r2, [r7, #7]
+ 8000756:	2101      	movs	r1, #1
+ 8000758:	fa01 f202 	lsl.w	r2, r1, r2
+ 800075c:	4611      	mov	r1, r2
+ 800075e:	4a18      	ldr	r2, [pc, #96]	; (80007c0 <NvicEnableInt+0x80>)
+ 8000760:	430b      	orrs	r3, r1
+ 8000762:	6013      	str	r3, [r2, #0]
+ 8000764:	e024      	b.n	80007b0 <NvicEnableInt+0x70>
+	}
+	else if( (IntNumber >= 32) && (IntNumber < 64) ) {
+ 8000766:	79fb      	ldrb	r3, [r7, #7]
+ 8000768:	2b1f      	cmp	r3, #31
+ 800076a:	d90f      	bls.n	800078c <NvicEnableInt+0x4c>
+ 800076c:	79fb      	ldrb	r3, [r7, #7]
+ 800076e:	2b3f      	cmp	r3, #63	; 0x3f
+ 8000770:	d80c      	bhi.n	800078c <NvicEnableInt+0x4c>
+		(*NVIC_ISER1) |= (1 << (IntNumber%32));
+ 8000772:	4b14      	ldr	r3, [pc, #80]	; (80007c4 <NvicEnableInt+0x84>)
+ 8000774:	681b      	ldr	r3, [r3, #0]
+ 8000776:	79fa      	ldrb	r2, [r7, #7]
+ 8000778:	f002 021f 	and.w	r2, r2, #31
+ 800077c:	2101      	movs	r1, #1
+ 800077e:	fa01 f202 	lsl.w	r2, r1, r2
+ 8000782:	4611      	mov	r1, r2
+ 8000784:	4a0f      	ldr	r2, [pc, #60]	; (80007c4 <NvicEnableInt+0x84>)
+ 8000786:	430b      	orrs	r3, r1
+ 8000788:	6013      	str	r3, [r2, #0]
+ 800078a:	e011      	b.n	80007b0 <NvicEnableInt+0x70>
+	}else if( (IntNumber >= 64) && (IntNumber < 81) ) {
+ 800078c:	79fb      	ldrb	r3, [r7, #7]
+ 800078e:	2b3f      	cmp	r3, #63	; 0x3f
+ 8000790:	d90e      	bls.n	80007b0 <NvicEnableInt+0x70>
+ 8000792:	79fb      	ldrb	r3, [r7, #7]
+ 8000794:	2b50      	cmp	r3, #80	; 0x50
+ 8000796:	d80b      	bhi.n	80007b0 <NvicEnableInt+0x70>
+		(*NVIC_ISER2) |= (1 << (IntNumber%64));
+ 8000798:	4b0b      	ldr	r3, [pc, #44]	; (80007c8 <NvicEnableInt+0x88>)
+ 800079a:	681b      	ldr	r3, [r3, #0]
+ 800079c:	79fa      	ldrb	r2, [r7, #7]
+ 800079e:	f002 023f 	and.w	r2, r2, #63	; 0x3f
+ 80007a2:	2101      	movs	r1, #1
+ 80007a4:	fa01 f202 	lsl.w	r2, r1, r2
+ 80007a8:	4611      	mov	r1, r2
+ 80007aa:	4a07      	ldr	r2, [pc, #28]	; (80007c8 <NvicEnableInt+0x88>)
+ 80007ac:	430b      	orrs	r3, r1
+ 80007ae:	6013      	str	r3, [r2, #0]
+	}
+
+	return SUCCESS;
+ 80007b0:	2300      	movs	r3, #0
+}
+ 80007b2:	4618      	mov	r0, r3
+ 80007b4:	370c      	adds	r7, #12
+ 80007b6:	46bd      	mov	sp, r7
+ 80007b8:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 80007bc:	4770      	bx	lr
+ 80007be:	bf00      	nop
+ 80007c0:	e000e100 	.word	0xe000e100
+ 80007c4:	e000e104 	.word	0xe000e104
+ 80007c8:	e000e108 	.word	0xe000e108
+
+080007cc <GetSystemClockFrequency>:
+#define LSE_CLOCK 32000000UL
+#define __FPU_PRESENT 1
+#define __FPU_USED 1
+
+
+uint32_t GetSystemClockFrequency(uint8_t _SystemBus) {
+ 80007cc:	b480      	push	{r7}
+ 80007ce:	b085      	sub	sp, #20
+ 80007d0:	af00      	add	r7, sp, #0
+ 80007d2:	4603      	mov	r3, r0
+ 80007d4:	71fb      	strb	r3, [r7, #7]
+
+
+    uint8_t ui8_LocalClockSource = 0;
+ 80007d6:	2300      	movs	r3, #0
+ 80007d8:	73fb      	strb	r3, [r7, #15]
+
+    // Extract bits 3:2 (SWS) and right-align
+    ui8_LocalClockSource = (RCC->CFGR >> 2) & 0x3;
+ 80007da:	4b0d      	ldr	r3, [pc, #52]	; (8000810 <GetSystemClockFrequency+0x44>)
+ 80007dc:	689b      	ldr	r3, [r3, #8]
+ 80007de:	089b      	lsrs	r3, r3, #2
+ 80007e0:	b2db      	uxtb	r3, r3
+ 80007e2:	f003 0303 	and.w	r3, r3, #3
+ 80007e6:	73fb      	strb	r3, [r7, #15]
+
+    switch (ui8_LocalClockSource)
+ 80007e8:	7bfb      	ldrb	r3, [r7, #15]
+ 80007ea:	2b00      	cmp	r3, #0
+ 80007ec:	d005      	beq.n	80007fa <GetSystemClockFrequency+0x2e>
+ 80007ee:	2b00      	cmp	r3, #0
+ 80007f0:	db07      	blt.n	8000802 <GetSystemClockFrequency+0x36>
+ 80007f2:	3b01      	subs	r3, #1
+ 80007f4:	2b01      	cmp	r3, #1
+ 80007f6:	d804      	bhi.n	8000802 <GetSystemClockFrequency+0x36>
+ 80007f8:	e001      	b.n	80007fe <GetSystemClockFrequency+0x32>
+    {
+        case 0:
+            return HSI_CLOCK;  // Internal 16 MHz
+ 80007fa:	4b06      	ldr	r3, [pc, #24]	; (8000814 <GetSystemClockFrequency+0x48>)
+ 80007fc:	e002      	b.n	8000804 <GetSystemClockFrequency+0x38>
+        case 1:
+            //return HSE_CLOCK;  // External crystal (e.g. 8 MHz)
+        case 2:
+            return PLL_CLOCK;  // Usually 168 MHz for STM32F407
+ 80007fe:	4b06      	ldr	r3, [pc, #24]	; (8000818 <GetSystemClockFrequency+0x4c>)
+ 8000800:	e000      	b.n	8000804 <GetSystemClockFrequency+0x38>
+        default:
+            return 0; // Unknown
+ 8000802:	2300      	movs	r3, #0
+    }
+
+}
+ 8000804:	4618      	mov	r0, r3
+ 8000806:	3714      	adds	r7, #20
+ 8000808:	46bd      	mov	sp, r7
+ 800080a:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 800080e:	4770      	bx	lr
+ 8000810:	40023800 	.word	0x40023800
+ 8000814:	00f42400 	.word	0x00f42400
+ 8000818:	0aba9500 	.word	0x0aba9500
+
+0800081c <SystemInit>:
+    return (system_clock / ahb_prescaler) / apb1_prescaler;
+}
+
+
+void SystemInit(void)
+{
+ 800081c:	b480      	push	{r7}
+ 800081e:	af00      	add	r7, sp, #0
+    /* FPU settings ------------------------------------------------------------*/
+    #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
+        (*CPACR) |= ((3UL << 20U)|(3UL << 22U));  /* set CP10 and CP11 Full Access */
+ 8000820:	4b05      	ldr	r3, [pc, #20]	; (8000838 <SystemInit+0x1c>)
+ 8000822:	681b      	ldr	r3, [r3, #0]
+ 8000824:	4a04      	ldr	r2, [pc, #16]	; (8000838 <SystemInit+0x1c>)
+ 8000826:	f443 0370 	orr.w	r3, r3, #15728640	; 0xf00000
+ 800082a:	6013      	str	r3, [r2, #0]
+    #endif
+}
+ 800082c:	bf00      	nop
+ 800082e:	46bd      	mov	sp, r7
+ 8000830:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8000834:	4770      	bx	lr
+ 8000836:	bf00      	nop
+ 8000838:	e000ed88 	.word	0xe000ed88
+
+0800083c <TIM1_BRK_TIM9_IRQHandler>:
+
+
+uint32_t g_timeOutFlag = 0;
+
+
+void TIM1_BRK_TIM9_IRQHandler (void) {
+ 800083c:	b480      	push	{r7}
+ 800083e:	af00      	add	r7, sp, #0
+
+	if( TIMER9->TIM_SR & 1)
+ 8000840:	4b09      	ldr	r3, [pc, #36]	; (8000868 <TIM1_BRK_TIM9_IRQHandler+0x2c>)
+ 8000842:	691b      	ldr	r3, [r3, #16]
+ 8000844:	f003 0301 	and.w	r3, r3, #1
+ 8000848:	2b00      	cmp	r3, #0
+ 800084a:	d008      	beq.n	800085e <TIM1_BRK_TIM9_IRQHandler+0x22>
+	{
+		TIMER9->TIM_SR &= ~(1 << 0);
+ 800084c:	4b06      	ldr	r3, [pc, #24]	; (8000868 <TIM1_BRK_TIM9_IRQHandler+0x2c>)
+ 800084e:	691b      	ldr	r3, [r3, #16]
+ 8000850:	4a05      	ldr	r2, [pc, #20]	; (8000868 <TIM1_BRK_TIM9_IRQHandler+0x2c>)
+ 8000852:	f023 0301 	bic.w	r3, r3, #1
+ 8000856:	6113      	str	r3, [r2, #16]
+		g_timeOutFlag = 1;
+ 8000858:	4b04      	ldr	r3, [pc, #16]	; (800086c <TIM1_BRK_TIM9_IRQHandler+0x30>)
+ 800085a:	2201      	movs	r2, #1
+ 800085c:	601a      	str	r2, [r3, #0]
+	}
+
+}
+ 800085e:	bf00      	nop
+ 8000860:	46bd      	mov	sp, r7
+ 8000862:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8000866:	4770      	bx	lr
+ 8000868:	40014000 	.word	0x40014000
+ 800086c:	20000080 	.word	0x20000080
+
+08000870 <TimerInit>:
+
+void TimerInit(tmr_9_register_t *Timer) {
+ 8000870:	b580      	push	{r7, lr}
+ 8000872:	b082      	sub	sp, #8
+ 8000874:	af00      	add	r7, sp, #0
+ 8000876:	6078      	str	r0, [r7, #4]
+
+	RCC->APB2ENR |= (1 << 16);
+ 8000878:	4b06      	ldr	r3, [pc, #24]	; (8000894 <TimerInit+0x24>)
+ 800087a:	6c5b      	ldr	r3, [r3, #68]	; 0x44
+ 800087c:	4a05      	ldr	r2, [pc, #20]	; (8000894 <TimerInit+0x24>)
+ 800087e:	f443 3380 	orr.w	r3, r3, #65536	; 0x10000
+ 8000882:	6453      	str	r3, [r2, #68]	; 0x44
+//	Timer->TIM_PSC = 83;
+//	Timer->TIM_CNT = 0;
+//	Timer->TIM_ARR = 0;
+
+	NvicEnableInt(24);
+ 8000884:	2018      	movs	r0, #24
+ 8000886:	f7ff ff5b 	bl	8000740 <NvicEnableInt>
+}
+ 800088a:	bf00      	nop
+ 800088c:	3708      	adds	r7, #8
+ 800088e:	46bd      	mov	sp, r7
+ 8000890:	bd80      	pop	{r7, pc}
+ 8000892:	bf00      	nop
+ 8000894:	40023800 	.word	0x40023800
+
+08000898 <TimerEnable>:
+
+
+void TimerEnable(tmr_9_register_t *Timer, uint32_t PreLoad) {
+ 8000898:	b480      	push	{r7}
+ 800089a:	b083      	sub	sp, #12
+ 800089c:	af00      	add	r7, sp, #0
+ 800089e:	6078      	str	r0, [r7, #4]
+ 80008a0:	6039      	str	r1, [r7, #0]
+
+	Timer->TIM_PSC = 15;
+ 80008a2:	687b      	ldr	r3, [r7, #4]
+ 80008a4:	220f      	movs	r2, #15
+ 80008a6:	629a      	str	r2, [r3, #40]	; 0x28
+	Timer->TIM_CNT = 0;
+ 80008a8:	687b      	ldr	r3, [r7, #4]
+ 80008aa:	2200      	movs	r2, #0
+ 80008ac:	625a      	str	r2, [r3, #36]	; 0x24
+	Timer->TIM_ARR = PreLoad;
+ 80008ae:	687b      	ldr	r3, [r7, #4]
+ 80008b0:	683a      	ldr	r2, [r7, #0]
+ 80008b2:	62da      	str	r2, [r3, #44]	; 0x2c
+	Timer->TIM_DIER |= (1 << 0);
+ 80008b4:	687b      	ldr	r3, [r7, #4]
+ 80008b6:	68db      	ldr	r3, [r3, #12]
+ 80008b8:	f043 0201 	orr.w	r2, r3, #1
+ 80008bc:	687b      	ldr	r3, [r7, #4]
+ 80008be:	60da      	str	r2, [r3, #12]
+	Timer->TIM_CR1 |= (1 << 7) | (1 << 0);
+ 80008c0:	687b      	ldr	r3, [r7, #4]
+ 80008c2:	681b      	ldr	r3, [r3, #0]
+ 80008c4:	f043 0281 	orr.w	r2, r3, #129	; 0x81
+ 80008c8:	687b      	ldr	r3, [r7, #4]
+ 80008ca:	601a      	str	r2, [r3, #0]
+
+}
+ 80008cc:	bf00      	nop
+ 80008ce:	370c      	adds	r7, #12
+ 80008d0:	46bd      	mov	sp, r7
+ 80008d2:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 80008d6:	4770      	bx	lr
+
+080008d8 <TimerDisable>:
+
+
+}
+
+
+void TimerDisable(tmr_9_register_t *Timer) {
+ 80008d8:	b480      	push	{r7}
+ 80008da:	b083      	sub	sp, #12
+ 80008dc:	af00      	add	r7, sp, #0
+ 80008de:	6078      	str	r0, [r7, #4]
+
+	Timer->TIM_CR1 &= ~(1 << 0);
+ 80008e0:	687b      	ldr	r3, [r7, #4]
+ 80008e2:	681b      	ldr	r3, [r3, #0]
+ 80008e4:	f023 0201 	bic.w	r2, r3, #1
+ 80008e8:	687b      	ldr	r3, [r7, #4]
+ 80008ea:	601a      	str	r2, [r3, #0]
+}
+ 80008ec:	bf00      	nop
+ 80008ee:	370c      	adds	r7, #12
+ 80008f0:	46bd      	mov	sp, r7
+ 80008f2:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 80008f6:	4770      	bx	lr
+
+080008f8 <MilliSecondsDelay>:
+
+void TimerLoadValue(uint32_t ui32Base) {
+
+
+}
+void MilliSecondsDelay(uint32_t delay) {
+ 80008f8:	b580      	push	{r7, lr}
+ 80008fa:	b082      	sub	sp, #8
+ 80008fc:	af00      	add	r7, sp, #0
+ 80008fe:	6078      	str	r0, [r7, #4]
+
+	while(delay) {
+ 8000900:	e006      	b.n	8000910 <MilliSecondsDelay+0x18>
+	MicroSecondsDelay(1000);
+ 8000902:	f44f 707a 	mov.w	r0, #1000	; 0x3e8
+ 8000906:	f000 f80b 	bl	8000920 <MicroSecondsDelay>
+	delay--;
+ 800090a:	687b      	ldr	r3, [r7, #4]
+ 800090c:	3b01      	subs	r3, #1
+ 800090e:	607b      	str	r3, [r7, #4]
+	while(delay) {
+ 8000910:	687b      	ldr	r3, [r7, #4]
+ 8000912:	2b00      	cmp	r3, #0
+ 8000914:	d1f5      	bne.n	8000902 <MilliSecondsDelay+0xa>
+	}
+}
+ 8000916:	bf00      	nop
+ 8000918:	bf00      	nop
+ 800091a:	3708      	adds	r7, #8
+ 800091c:	46bd      	mov	sp, r7
+ 800091e:	bd80      	pop	{r7, pc}
+
+08000920 <MicroSecondsDelay>:
+
+void MicroSecondsDelay(uint32_t delay) {
+ 8000920:	b580      	push	{r7, lr}
+ 8000922:	b084      	sub	sp, #16
+ 8000924:	af00      	add	r7, sp, #0
+ 8000926:	6078      	str	r0, [r7, #4]
+
+	uint32_t ui32LocalLoadValue = 0;
+ 8000928:	2300      	movs	r3, #0
+ 800092a:	60fb      	str	r3, [r7, #12]
+	uint32_t ui32LocalRemining = delay;
+ 800092c:	687b      	ldr	r3, [r7, #4]
+ 800092e:	60bb      	str	r3, [r7, #8]
+	while(ui32LocalRemining > 0 )
+ 8000930:	e01e      	b.n	8000970 <MicroSecondsDelay+0x50>
+	{
+
+		if( ui32LocalRemining > 65536) {
+ 8000932:	68bb      	ldr	r3, [r7, #8]
+ 8000934:	f5b3 3f80 	cmp.w	r3, #65536	; 0x10000
+ 8000938:	d907      	bls.n	800094a <MicroSecondsDelay+0x2a>
+			ui32LocalLoadValue = 65536;
+ 800093a:	f44f 3380 	mov.w	r3, #65536	; 0x10000
+ 800093e:	60fb      	str	r3, [r7, #12]
+			ui32LocalRemining -= 65536;
+ 8000940:	68bb      	ldr	r3, [r7, #8]
+ 8000942:	f5a3 3380 	sub.w	r3, r3, #65536	; 0x10000
+ 8000946:	60bb      	str	r3, [r7, #8]
+ 8000948:	e003      	b.n	8000952 <MicroSecondsDelay+0x32>
+		} else {
+			ui32LocalLoadValue = ui32LocalRemining;
+ 800094a:	68bb      	ldr	r3, [r7, #8]
+ 800094c:	60fb      	str	r3, [r7, #12]
+			ui32LocalRemining = 0;
+ 800094e:	2300      	movs	r3, #0
+ 8000950:	60bb      	str	r3, [r7, #8]
+		}
+
+		g_timeOutFlag = 0;
+ 8000952:	4b0b      	ldr	r3, [pc, #44]	; (8000980 <MicroSecondsDelay+0x60>)
+ 8000954:	2200      	movs	r2, #0
+ 8000956:	601a      	str	r2, [r3, #0]
+		TimerEnable(TIMER9,ui32LocalLoadValue);
+ 8000958:	68f9      	ldr	r1, [r7, #12]
+ 800095a:	480a      	ldr	r0, [pc, #40]	; (8000984 <MicroSecondsDelay+0x64>)
+ 800095c:	f7ff ff9c 	bl	8000898 <TimerEnable>
+		while(!g_timeOutFlag);
+ 8000960:	bf00      	nop
+ 8000962:	4b07      	ldr	r3, [pc, #28]	; (8000980 <MicroSecondsDelay+0x60>)
+ 8000964:	681b      	ldr	r3, [r3, #0]
+ 8000966:	2b00      	cmp	r3, #0
+ 8000968:	d0fb      	beq.n	8000962 <MicroSecondsDelay+0x42>
+		TimerDisable(TIMER9);
+ 800096a:	4806      	ldr	r0, [pc, #24]	; (8000984 <MicroSecondsDelay+0x64>)
+ 800096c:	f7ff ffb4 	bl	80008d8 <TimerDisable>
+	while(ui32LocalRemining > 0 )
+ 8000970:	68bb      	ldr	r3, [r7, #8]
+ 8000972:	2b00      	cmp	r3, #0
+ 8000974:	d1dd      	bne.n	8000932 <MicroSecondsDelay+0x12>
+	}
+
+}
+ 8000976:	bf00      	nop
+ 8000978:	bf00      	nop
+ 800097a:	3710      	adds	r7, #16
+ 800097c:	46bd      	mov	sp, r7
+ 800097e:	bd80      	pop	{r7, pc}
+ 8000980:	20000080 	.word	0x20000080
+ 8000984:	40014000 	.word	0x40014000
+
+08000988 <uartInit>:
+ */
+
+
+#include "uart.h"
+
+usartReturnStatus_t uartInit(usartHandle_t *uartData) {
+ 8000988:	b580      	push	{r7, lr}
+ 800098a:	b082      	sub	sp, #8
+ 800098c:	af00      	add	r7, sp, #0
+ 800098e:	6078      	str	r0, [r7, #4]
+
+	if ( uartPheripheralEnable((uint32_t *)uartData->usartBase) == USART_PHERIPHERAL_NOT_ENABLED) {
+ 8000990:	687b      	ldr	r3, [r7, #4]
+ 8000992:	681b      	ldr	r3, [r3, #0]
+ 8000994:	4618      	mov	r0, r3
+ 8000996:	f000 f86f 	bl	8000a78 <uartPheripheralEnable>
+ 800099a:	4603      	mov	r3, r0
+ 800099c:	2b04      	cmp	r3, #4
+ 800099e:	d101      	bne.n	80009a4 <uartInit+0x1c>
+		return USART_INIT_FAILED;
+ 80009a0:	2301      	movs	r3, #1
+ 80009a2:	e044      	b.n	8000a2e <uartInit+0xa6>
+	}
+
+
+
+
+	uartCalculateBaurdRate(uartData);
+ 80009a4:	6878      	ldr	r0, [r7, #4]
+ 80009a6:	f000 f8e8 	bl	8000b7a <uartCalculateBaurdRate>
+	uartData->usartBase->CR1 &= ~(1 << 15);
+ 80009aa:	687b      	ldr	r3, [r7, #4]
+ 80009ac:	681b      	ldr	r3, [r3, #0]
+ 80009ae:	68da      	ldr	r2, [r3, #12]
+ 80009b0:	687b      	ldr	r3, [r7, #4]
+ 80009b2:	681b      	ldr	r3, [r3, #0]
+ 80009b4:	f422 4200 	bic.w	r2, r2, #32768	; 0x8000
+ 80009b8:	60da      	str	r2, [r3, #12]
+	uartData->usartBase->CR1 |= (uartData->overSampling << 15);
+ 80009ba:	687b      	ldr	r3, [r7, #4]
+ 80009bc:	681b      	ldr	r3, [r3, #0]
+ 80009be:	68da      	ldr	r2, [r3, #12]
+ 80009c0:	687b      	ldr	r3, [r7, #4]
+ 80009c2:	7a5b      	ldrb	r3, [r3, #9]
+ 80009c4:	03db      	lsls	r3, r3, #15
+ 80009c6:	4619      	mov	r1, r3
+ 80009c8:	687b      	ldr	r3, [r7, #4]
+ 80009ca:	681b      	ldr	r3, [r3, #0]
+ 80009cc:	430a      	orrs	r2, r1
+ 80009ce:	60da      	str	r2, [r3, #12]
+	/*Uart WordLength set*/
+
+
+	uartData->usartBase->CR1 &= ~(1 << 12);
+ 80009d0:	687b      	ldr	r3, [r7, #4]
+ 80009d2:	681b      	ldr	r3, [r3, #0]
+ 80009d4:	68da      	ldr	r2, [r3, #12]
+ 80009d6:	687b      	ldr	r3, [r7, #4]
+ 80009d8:	681b      	ldr	r3, [r3, #0]
+ 80009da:	f422 5280 	bic.w	r2, r2, #4096	; 0x1000
+ 80009de:	60da      	str	r2, [r3, #12]
+	uartData->usartBase->CR1 |= (uartData->wordLength << 12);
+ 80009e0:	687b      	ldr	r3, [r7, #4]
+ 80009e2:	681b      	ldr	r3, [r3, #0]
+ 80009e4:	68da      	ldr	r2, [r3, #12]
+ 80009e6:	687b      	ldr	r3, [r7, #4]
+ 80009e8:	7b5b      	ldrb	r3, [r3, #13]
+ 80009ea:	031b      	lsls	r3, r3, #12
+ 80009ec:	4619      	mov	r1, r3
+ 80009ee:	687b      	ldr	r3, [r7, #4]
+ 80009f0:	681b      	ldr	r3, [r3, #0]
+ 80009f2:	430a      	orrs	r2, r1
+ 80009f4:	60da      	str	r2, [r3, #12]
+
+	uartData->usartBase->CR1 |= (1 << 3);
+ 80009f6:	687b      	ldr	r3, [r7, #4]
+ 80009f8:	681b      	ldr	r3, [r3, #0]
+ 80009fa:	68da      	ldr	r2, [r3, #12]
+ 80009fc:	687b      	ldr	r3, [r7, #4]
+ 80009fe:	681b      	ldr	r3, [r3, #0]
+ 8000a00:	f042 0208 	orr.w	r2, r2, #8
+ 8000a04:	60da      	str	r2, [r3, #12]
+	/*Uart Receiver Enable */
+	uartData->usartBase->CR1 &= ~(1 << 2);
+ 8000a06:	687b      	ldr	r3, [r7, #4]
+ 8000a08:	681b      	ldr	r3, [r3, #0]
+ 8000a0a:	68da      	ldr	r2, [r3, #12]
+ 8000a0c:	687b      	ldr	r3, [r7, #4]
+ 8000a0e:	681b      	ldr	r3, [r3, #0]
+ 8000a10:	f022 0204 	bic.w	r2, r2, #4
+ 8000a14:	60da      	str	r2, [r3, #12]
+	uartData->usartBase->CR1 |= (1 << 2);
+ 8000a16:	687b      	ldr	r3, [r7, #4]
+ 8000a18:	681b      	ldr	r3, [r3, #0]
+ 8000a1a:	68da      	ldr	r2, [r3, #12]
+ 8000a1c:	687b      	ldr	r3, [r7, #4]
+ 8000a1e:	681b      	ldr	r3, [r3, #0]
+ 8000a20:	f042 0204 	orr.w	r2, r2, #4
+ 8000a24:	60da      	str	r2, [r3, #12]
+	/*Uart Oversampling Set*/
+
+
+	usartEnable(UART4);
+ 8000a26:	4804      	ldr	r0, [pc, #16]	; (8000a38 <uartInit+0xb0>)
+ 8000a28:	f000 f98f 	bl	8000d4a <usartEnable>
+
+
+	return USART_INIT_SUCCESSFULLY;
+ 8000a2c:	2300      	movs	r3, #0
+}
+ 8000a2e:	4618      	mov	r0, r3
+ 8000a30:	3708      	adds	r7, #8
+ 8000a32:	46bd      	mov	sp, r7
+ 8000a34:	bd80      	pop	{r7, pc}
+ 8000a36:	bf00      	nop
+ 8000a38:	40004c00 	.word	0x40004c00
+
+08000a3c <uartSendChar>:
+
+uint32_t uartRead(usart_register_t *_Base,char *string) {
+	return 0;
+}
+
+uint8_t uartSendChar(usart_register_t *_Base, char ch) {
+ 8000a3c:	b480      	push	{r7}
+ 8000a3e:	b083      	sub	sp, #12
+ 8000a40:	af00      	add	r7, sp, #0
+ 8000a42:	6078      	str	r0, [r7, #4]
+ 8000a44:	460b      	mov	r3, r1
+ 8000a46:	70fb      	strb	r3, [r7, #3]
+	while(!( (_Base->SR) & (1 << 7) ) );
+ 8000a48:	bf00      	nop
+ 8000a4a:	687b      	ldr	r3, [r7, #4]
+ 8000a4c:	681b      	ldr	r3, [r3, #0]
+ 8000a4e:	f003 0380 	and.w	r3, r3, #128	; 0x80
+ 8000a52:	2b00      	cmp	r3, #0
+ 8000a54:	d0f9      	beq.n	8000a4a <uartSendChar+0xe>
+	_Base->DR = ch;
+ 8000a56:	78fa      	ldrb	r2, [r7, #3]
+ 8000a58:	687b      	ldr	r3, [r7, #4]
+ 8000a5a:	605a      	str	r2, [r3, #4]
+	while(!( (_Base->SR) & (1 << 6) ) );
+ 8000a5c:	bf00      	nop
+ 8000a5e:	687b      	ldr	r3, [r7, #4]
+ 8000a60:	681b      	ldr	r3, [r3, #0]
+ 8000a62:	f003 0340 	and.w	r3, r3, #64	; 0x40
+ 8000a66:	2b00      	cmp	r3, #0
+ 8000a68:	d0f9      	beq.n	8000a5e <uartSendChar+0x22>
+	return 0;
+ 8000a6a:	2300      	movs	r3, #0
+}
+ 8000a6c:	4618      	mov	r0, r3
+ 8000a6e:	370c      	adds	r7, #12
+ 8000a70:	46bd      	mov	sp, r7
+ 8000a72:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8000a76:	4770      	bx	lr
+
+08000a78 <uartPheripheralEnable>:
+
+uint8_t uartPheripheralEnable(uint32_t  *Base) {
+ 8000a78:	b580      	push	{r7, lr}
+ 8000a7a:	b082      	sub	sp, #8
+ 8000a7c:	af00      	add	r7, sp, #0
+ 8000a7e:	6078      	str	r0, [r7, #4]
+	if( Base == (uint32_t *)USART1 )	{ 	return (enableSysPheripheral(&(RCC->APB2ENR), ENABLE_USART1)); 	}
+ 8000a80:	687b      	ldr	r3, [r7, #4]
+ 8000a82:	4a20      	ldr	r2, [pc, #128]	; (8000b04 <uartPheripheralEnable+0x8c>)
+ 8000a84:	4293      	cmp	r3, r2
+ 8000a86:	d105      	bne.n	8000a94 <uartPheripheralEnable+0x1c>
+ 8000a88:	2104      	movs	r1, #4
+ 8000a8a:	481f      	ldr	r0, [pc, #124]	; (8000b08 <uartPheripheralEnable+0x90>)
+ 8000a8c:	f000 f84a 	bl	8000b24 <enableSysPheripheral>
+ 8000a90:	4603      	mov	r3, r0
+ 8000a92:	e032      	b.n	8000afa <uartPheripheralEnable+0x82>
+	else if( Base == (uint32_t *)USART2){ 	return (enableSysPheripheral(&(RCC->APB1ENR), ENABLE_USART2));	}
+ 8000a94:	687b      	ldr	r3, [r7, #4]
+ 8000a96:	4a1d      	ldr	r2, [pc, #116]	; (8000b0c <uartPheripheralEnable+0x94>)
+ 8000a98:	4293      	cmp	r3, r2
+ 8000a9a:	d105      	bne.n	8000aa8 <uartPheripheralEnable+0x30>
+ 8000a9c:	2111      	movs	r1, #17
+ 8000a9e:	481c      	ldr	r0, [pc, #112]	; (8000b10 <uartPheripheralEnable+0x98>)
+ 8000aa0:	f000 f840 	bl	8000b24 <enableSysPheripheral>
+ 8000aa4:	4603      	mov	r3, r0
+ 8000aa6:	e028      	b.n	8000afa <uartPheripheralEnable+0x82>
+	else if( Base == (uint32_t *)USART3){	return (enableSysPheripheral(&(RCC->APB1ENR), ENABLE_USART3));	}
+ 8000aa8:	687b      	ldr	r3, [r7, #4]
+ 8000aaa:	4a1a      	ldr	r2, [pc, #104]	; (8000b14 <uartPheripheralEnable+0x9c>)
+ 8000aac:	4293      	cmp	r3, r2
+ 8000aae:	d105      	bne.n	8000abc <uartPheripheralEnable+0x44>
+ 8000ab0:	2112      	movs	r1, #18
+ 8000ab2:	4817      	ldr	r0, [pc, #92]	; (8000b10 <uartPheripheralEnable+0x98>)
+ 8000ab4:	f000 f836 	bl	8000b24 <enableSysPheripheral>
+ 8000ab8:	4603      	mov	r3, r0
+ 8000aba:	e01e      	b.n	8000afa <uartPheripheralEnable+0x82>
+	else if( Base == (uint32_t *)UART4)	{	return (enableSysPheripheral(&(RCC->APB1ENR), ENABLE_UART4));	}
+ 8000abc:	687b      	ldr	r3, [r7, #4]
+ 8000abe:	4a16      	ldr	r2, [pc, #88]	; (8000b18 <uartPheripheralEnable+0xa0>)
+ 8000ac0:	4293      	cmp	r3, r2
+ 8000ac2:	d105      	bne.n	8000ad0 <uartPheripheralEnable+0x58>
+ 8000ac4:	2113      	movs	r1, #19
+ 8000ac6:	4812      	ldr	r0, [pc, #72]	; (8000b10 <uartPheripheralEnable+0x98>)
+ 8000ac8:	f000 f82c 	bl	8000b24 <enableSysPheripheral>
+ 8000acc:	4603      	mov	r3, r0
+ 8000ace:	e014      	b.n	8000afa <uartPheripheralEnable+0x82>
+	else if( Base == (uint32_t *)UART5)	{	return (enableSysPheripheral(&(RCC->APB1ENR), ENABLE_UART5));	}
+ 8000ad0:	687b      	ldr	r3, [r7, #4]
+ 8000ad2:	4a12      	ldr	r2, [pc, #72]	; (8000b1c <uartPheripheralEnable+0xa4>)
+ 8000ad4:	4293      	cmp	r3, r2
+ 8000ad6:	d105      	bne.n	8000ae4 <uartPheripheralEnable+0x6c>
+ 8000ad8:	2114      	movs	r1, #20
+ 8000ada:	480d      	ldr	r0, [pc, #52]	; (8000b10 <uartPheripheralEnable+0x98>)
+ 8000adc:	f000 f822 	bl	8000b24 <enableSysPheripheral>
+ 8000ae0:	4603      	mov	r3, r0
+ 8000ae2:	e00a      	b.n	8000afa <uartPheripheralEnable+0x82>
+	else if( Base == (uint32_t *)USART6){	return (enableSysPheripheral(&(RCC->APB2ENR), ENABLE_USART6)); 	}
+ 8000ae4:	687b      	ldr	r3, [r7, #4]
+ 8000ae6:	4a0e      	ldr	r2, [pc, #56]	; (8000b20 <uartPheripheralEnable+0xa8>)
+ 8000ae8:	4293      	cmp	r3, r2
+ 8000aea:	d105      	bne.n	8000af8 <uartPheripheralEnable+0x80>
+ 8000aec:	2105      	movs	r1, #5
+ 8000aee:	4806      	ldr	r0, [pc, #24]	; (8000b08 <uartPheripheralEnable+0x90>)
+ 8000af0:	f000 f818 	bl	8000b24 <enableSysPheripheral>
+ 8000af4:	4603      	mov	r3, r0
+ 8000af6:	e000      	b.n	8000afa <uartPheripheralEnable+0x82>
+	return 0;
+ 8000af8:	2300      	movs	r3, #0
+}
+ 8000afa:	4618      	mov	r0, r3
+ 8000afc:	3708      	adds	r7, #8
+ 8000afe:	46bd      	mov	sp, r7
+ 8000b00:	bd80      	pop	{r7, pc}
+ 8000b02:	bf00      	nop
+ 8000b04:	40011000 	.word	0x40011000
+ 8000b08:	40023844 	.word	0x40023844
+ 8000b0c:	40004400 	.word	0x40004400
+ 8000b10:	40023840 	.word	0x40023840
+ 8000b14:	40004800 	.word	0x40004800
+ 8000b18:	40004c00 	.word	0x40004c00
+ 8000b1c:	40005000 	.word	0x40005000
+ 8000b20:	40011400 	.word	0x40011400
+
+08000b24 <enableSysPheripheral>:
+
+usartReturnStatus_t enableSysPheripheral(volatile uint32_t *_Base, uint16_t Pos) {
+ 8000b24:	b480      	push	{r7}
+ 8000b26:	b083      	sub	sp, #12
+ 8000b28:	af00      	add	r7, sp, #0
+ 8000b2a:	6078      	str	r0, [r7, #4]
+ 8000b2c:	460b      	mov	r3, r1
+ 8000b2e:	807b      	strh	r3, [r7, #2]
+
+	*(_Base) &= ~(1 << Pos);
+ 8000b30:	687b      	ldr	r3, [r7, #4]
+ 8000b32:	681b      	ldr	r3, [r3, #0]
+ 8000b34:	887a      	ldrh	r2, [r7, #2]
+ 8000b36:	2101      	movs	r1, #1
+ 8000b38:	fa01 f202 	lsl.w	r2, r1, r2
+ 8000b3c:	43d2      	mvns	r2, r2
+ 8000b3e:	401a      	ands	r2, r3
+ 8000b40:	687b      	ldr	r3, [r7, #4]
+ 8000b42:	601a      	str	r2, [r3, #0]
+	*(_Base) |= (1 << Pos);
+ 8000b44:	687b      	ldr	r3, [r7, #4]
+ 8000b46:	681b      	ldr	r3, [r3, #0]
+ 8000b48:	887a      	ldrh	r2, [r7, #2]
+ 8000b4a:	2101      	movs	r1, #1
+ 8000b4c:	fa01 f202 	lsl.w	r2, r1, r2
+ 8000b50:	431a      	orrs	r2, r3
+ 8000b52:	687b      	ldr	r3, [r7, #4]
+ 8000b54:	601a      	str	r2, [r3, #0]
+
+	if( (*(_Base)) & (1 << Pos)) {
+ 8000b56:	687b      	ldr	r3, [r7, #4]
+ 8000b58:	681b      	ldr	r3, [r3, #0]
+ 8000b5a:	887a      	ldrh	r2, [r7, #2]
+ 8000b5c:	2101      	movs	r1, #1
+ 8000b5e:	fa01 f202 	lsl.w	r2, r1, r2
+ 8000b62:	4013      	ands	r3, r2
+ 8000b64:	2b00      	cmp	r3, #0
+ 8000b66:	d001      	beq.n	8000b6c <enableSysPheripheral+0x48>
+		return USART_PHERIPHERAL_ENABLED;
+ 8000b68:	2303      	movs	r3, #3
+ 8000b6a:	e000      	b.n	8000b6e <enableSysPheripheral+0x4a>
+	} else {
+		return USART_PHERIPHERAL_NOT_ENABLED;
+ 8000b6c:	2304      	movs	r3, #4
+	}
+}
+ 8000b6e:	4618      	mov	r0, r3
+ 8000b70:	370c      	adds	r7, #12
+ 8000b72:	46bd      	mov	sp, r7
+ 8000b74:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8000b78:	4770      	bx	lr
+
+08000b7a <uartCalculateBaurdRate>:
+
+
+
+void uartCalculateBaurdRate(usartHandle_t *uartData) {
+ 8000b7a:	b580      	push	{r7, lr}
+ 8000b7c:	b086      	sub	sp, #24
+ 8000b7e:	af00      	add	r7, sp, #0
+ 8000b80:	6078      	str	r0, [r7, #4]
+
+	uint16_t Mantissa = 0;
+ 8000b82:	2300      	movs	r3, #0
+ 8000b84:	81fb      	strh	r3, [r7, #14]
+	uint8_t Fraction = 0;
+ 8000b86:	2300      	movs	r3, #0
+ 8000b88:	75fb      	strb	r3, [r7, #23]
+	uint32_t clockFrequency = 0;
+ 8000b8a:	2300      	movs	r3, #0
+ 8000b8c:	60bb      	str	r3, [r7, #8]
+	 float usartdiv = 0.0;
+ 8000b8e:	f04f 0300 	mov.w	r3, #0
+ 8000b92:	613b      	str	r3, [r7, #16]
+
+	clockFrequency = GetSystemClockFrequency(APB1_SYSTEMBUS);
+ 8000b94:	2001      	movs	r0, #1
+ 8000b96:	f7ff fe19 	bl	80007cc <GetSystemClockFrequency>
+ 8000b9a:	60b8      	str	r0, [r7, #8]
+
+	if (uartData->overSampling == 1) // OVER8 = 1
+ 8000b9c:	687b      	ldr	r3, [r7, #4]
+ 8000b9e:	7a5b      	ldrb	r3, [r3, #9]
+ 8000ba0:	2b01      	cmp	r3, #1
+ 8000ba2:	d113      	bne.n	8000bcc <uartCalculateBaurdRate+0x52>
+	{
+	    usartdiv = (float)clockFrequency / (8.0f * (float)uartData->baudRate);
+ 8000ba4:	68bb      	ldr	r3, [r7, #8]
+ 8000ba6:	ee07 3a90 	vmov	s15, r3
+ 8000baa:	eef8 6a67 	vcvt.f32.u32	s13, s15
+ 8000bae:	687b      	ldr	r3, [r7, #4]
+ 8000bb0:	685b      	ldr	r3, [r3, #4]
+ 8000bb2:	ee07 3a90 	vmov	s15, r3
+ 8000bb6:	eef8 7a67 	vcvt.f32.u32	s15, s15
+ 8000bba:	eeb2 7a00 	vmov.f32	s14, #32	; 0x41000000  8.0
+ 8000bbe:	ee27 7a87 	vmul.f32	s14, s15, s14
+ 8000bc2:	eec6 7a87 	vdiv.f32	s15, s13, s14
+ 8000bc6:	edc7 7a04 	vstr	s15, [r7, #16]
+ 8000bca:	e012      	b.n	8000bf2 <uartCalculateBaurdRate+0x78>
+	}
+	else // OVER8 = 0
+	{
+	    usartdiv = (float)clockFrequency / (16.0f * (float)uartData->baudRate);
+ 8000bcc:	68bb      	ldr	r3, [r7, #8]
+ 8000bce:	ee07 3a90 	vmov	s15, r3
+ 8000bd2:	eef8 6a67 	vcvt.f32.u32	s13, s15
+ 8000bd6:	687b      	ldr	r3, [r7, #4]
+ 8000bd8:	685b      	ldr	r3, [r3, #4]
+ 8000bda:	ee07 3a90 	vmov	s15, r3
+ 8000bde:	eef8 7a67 	vcvt.f32.u32	s15, s15
+ 8000be2:	eeb3 7a00 	vmov.f32	s14, #48	; 0x41800000  16.0
+ 8000be6:	ee27 7a87 	vmul.f32	s14, s15, s14
+ 8000bea:	eec6 7a87 	vdiv.f32	s15, s13, s14
+ 8000bee:	edc7 7a04 	vstr	s15, [r7, #16]
+	}
+
+	Mantissa = (uint16_t)usartdiv;
+ 8000bf2:	edd7 7a04 	vldr	s15, [r7, #16]
+ 8000bf6:	eefc 7ae7 	vcvt.u32.f32	s15, s15
+ 8000bfa:	ee17 3a90 	vmov	r3, s15
+ 8000bfe:	81fb      	strh	r3, [r7, #14]
+
+
+	Fraction = (uint8_t)( (usartdiv - (float)Mantissa) * (uartData->overSampling?(float)8.0:(float)16.0) + (float)0.5);
+ 8000c00:	89fb      	ldrh	r3, [r7, #14]
+ 8000c02:	ee07 3a90 	vmov	s15, r3
+ 8000c06:	eef8 7a67 	vcvt.f32.u32	s15, s15
+ 8000c0a:	ed97 7a04 	vldr	s14, [r7, #16]
+ 8000c0e:	ee77 7a67 	vsub.f32	s15, s14, s15
+ 8000c12:	687b      	ldr	r3, [r7, #4]
+ 8000c14:	7a5b      	ldrb	r3, [r3, #9]
+ 8000c16:	2b00      	cmp	r3, #0
+ 8000c18:	d002      	beq.n	8000c20 <uartCalculateBaurdRate+0xa6>
+ 8000c1a:	eeb2 7a00 	vmov.f32	s14, #32	; 0x41000000  8.0
+ 8000c1e:	e001      	b.n	8000c24 <uartCalculateBaurdRate+0xaa>
+ 8000c20:	eeb3 7a00 	vmov.f32	s14, #48	; 0x41800000  16.0
+ 8000c24:	ee67 7a27 	vmul.f32	s15, s14, s15
+ 8000c28:	eeb6 7a00 	vmov.f32	s14, #96	; 0x3f000000  0.5
+ 8000c2c:	ee77 7a87 	vadd.f32	s15, s15, s14
+ 8000c30:	eefc 7ae7 	vcvt.u32.f32	s15, s15
+ 8000c34:	edc7 7a00 	vstr	s15, [r7]
+ 8000c38:	783b      	ldrb	r3, [r7, #0]
+ 8000c3a:	75fb      	strb	r3, [r7, #23]
+
+	if (uartData->overSampling == 1) {
+ 8000c3c:	687b      	ldr	r3, [r7, #4]
+ 8000c3e:	7a5b      	ldrb	r3, [r3, #9]
+ 8000c40:	2b01      	cmp	r3, #1
+ 8000c42:	d104      	bne.n	8000c4e <uartCalculateBaurdRate+0xd4>
+	    Fraction &= 0x07; // Keep only 3 bits (bit 3 must be 0)
+ 8000c44:	7dfb      	ldrb	r3, [r7, #23]
+ 8000c46:	f003 0307 	and.w	r3, r3, #7
+ 8000c4a:	75fb      	strb	r3, [r7, #23]
+ 8000c4c:	e003      	b.n	8000c56 <uartCalculateBaurdRate+0xdc>
+	} else {
+	    Fraction &= 0x0F; // Keep all 4 bits
+ 8000c4e:	7dfb      	ldrb	r3, [r7, #23]
+ 8000c50:	f003 030f 	and.w	r3, r3, #15
+ 8000c54:	75fb      	strb	r3, [r7, #23]
+	}
+
+	uartData->usartBase->BRR = (Mantissa << 4) | Fraction;
+ 8000c56:	89fb      	ldrh	r3, [r7, #14]
+ 8000c58:	011a      	lsls	r2, r3, #4
+ 8000c5a:	7dfb      	ldrb	r3, [r7, #23]
+ 8000c5c:	431a      	orrs	r2, r3
+ 8000c5e:	687b      	ldr	r3, [r7, #4]
+ 8000c60:	681b      	ldr	r3, [r3, #0]
+ 8000c62:	609a      	str	r2, [r3, #8]
+}
+ 8000c64:	bf00      	nop
+ 8000c66:	3718      	adds	r7, #24
+ 8000c68:	46bd      	mov	sp, r7
+ 8000c6a:	bd80      	pop	{r7, pc}
+
+08000c6c <uartInterruptEnable>:
+
+usartReturnStatus_t uartInterruptEnable(usart_register_t *Base,uint32_t InterruptType) {
+ 8000c6c:	b480      	push	{r7}
+ 8000c6e:	b083      	sub	sp, #12
+ 8000c70:	af00      	add	r7, sp, #0
+ 8000c72:	6078      	str	r0, [r7, #4]
+ 8000c74:	6039      	str	r1, [r7, #0]
+//
+//	if (!(Base->CR1 & (1 << 8))) {
+//		return USART_INTERRUPT_NOT_ENABLED;
+//	}
+
+	if (InterruptType == TX_INTERRUPT) {
+ 8000c76:	683b      	ldr	r3, [r7, #0]
+ 8000c78:	2b08      	cmp	r3, #8
+ 8000c7a:	d115      	bne.n	8000ca8 <uartInterruptEnable+0x3c>
+		Base->CR1 &= ~(1 << 7);
+ 8000c7c:	687b      	ldr	r3, [r7, #4]
+ 8000c7e:	68db      	ldr	r3, [r3, #12]
+ 8000c80:	f023 0280 	bic.w	r2, r3, #128	; 0x80
+ 8000c84:	687b      	ldr	r3, [r7, #4]
+ 8000c86:	60da      	str	r2, [r3, #12]
+		Base->CR1 |= (1 << 7);
+ 8000c88:	687b      	ldr	r3, [r7, #4]
+ 8000c8a:	68db      	ldr	r3, [r3, #12]
+ 8000c8c:	f043 0280 	orr.w	r2, r3, #128	; 0x80
+ 8000c90:	687b      	ldr	r3, [r7, #4]
+ 8000c92:	60da      	str	r2, [r3, #12]
+
+		if (!(Base->CR1 & (1 << 7))) {
+ 8000c94:	687b      	ldr	r3, [r7, #4]
+ 8000c96:	68db      	ldr	r3, [r3, #12]
+ 8000c98:	f003 0380 	and.w	r3, r3, #128	; 0x80
+ 8000c9c:	2b00      	cmp	r3, #0
+ 8000c9e:	d101      	bne.n	8000ca4 <uartInterruptEnable+0x38>
+			return USART_TX_INTERRUPT_NOT_ENABLED;
+ 8000ca0:	230b      	movs	r3, #11
+ 8000ca2:	e01b      	b.n	8000cdc <uartInterruptEnable+0x70>
+		} else {
+			return USART_TX_INTERRUPT_ENABLED;
+ 8000ca4:	230a      	movs	r3, #10
+ 8000ca6:	e019      	b.n	8000cdc <uartInterruptEnable+0x70>
+		}
+
+	} else if (InterruptType == RX_INTERRUPT) {
+ 8000ca8:	683b      	ldr	r3, [r7, #0]
+ 8000caa:	2b09      	cmp	r3, #9
+ 8000cac:	d115      	bne.n	8000cda <uartInterruptEnable+0x6e>
+		Base->CR1 &= ~(1 << 5);
+ 8000cae:	687b      	ldr	r3, [r7, #4]
+ 8000cb0:	68db      	ldr	r3, [r3, #12]
+ 8000cb2:	f023 0220 	bic.w	r2, r3, #32
+ 8000cb6:	687b      	ldr	r3, [r7, #4]
+ 8000cb8:	60da      	str	r2, [r3, #12]
+		Base->CR1 |= (1 << 5);
+ 8000cba:	687b      	ldr	r3, [r7, #4]
+ 8000cbc:	68db      	ldr	r3, [r3, #12]
+ 8000cbe:	f043 0220 	orr.w	r2, r3, #32
+ 8000cc2:	687b      	ldr	r3, [r7, #4]
+ 8000cc4:	60da      	str	r2, [r3, #12]
+		if (!(Base->CR1 & (1 << 5))) {
+ 8000cc6:	687b      	ldr	r3, [r7, #4]
+ 8000cc8:	68db      	ldr	r3, [r3, #12]
+ 8000cca:	f003 0320 	and.w	r3, r3, #32
+ 8000cce:	2b00      	cmp	r3, #0
+ 8000cd0:	d101      	bne.n	8000cd6 <uartInterruptEnable+0x6a>
+			return USART_RX_INTERRUPT_NOT_ENABLED;
+ 8000cd2:	230f      	movs	r3, #15
+ 8000cd4:	e002      	b.n	8000cdc <uartInterruptEnable+0x70>
+		} else {
+			return USART_RX_INTERRUPT_ENABLED;
+ 8000cd6:	230e      	movs	r3, #14
+ 8000cd8:	e000      	b.n	8000cdc <uartInterruptEnable+0x70>
+		}
+	}
+
+	return USART_INTERRUPT_NOT_ENABLED;
+ 8000cda:	2308      	movs	r3, #8
+}
+ 8000cdc:	4618      	mov	r0, r3
+ 8000cde:	370c      	adds	r7, #12
+ 8000ce0:	46bd      	mov	sp, r7
+ 8000ce2:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8000ce6:	4770      	bx	lr
+
+08000ce8 <uartInterruptDisable>:
+
+
+usartReturnStatus_t uartInterruptDisable(usart_register_t *Base,uint32_t InterruptType) {
+ 8000ce8:	b480      	push	{r7}
+ 8000cea:	b083      	sub	sp, #12
+ 8000cec:	af00      	add	r7, sp, #0
+ 8000cee:	6078      	str	r0, [r7, #4]
+ 8000cf0:	6039      	str	r1, [r7, #0]
+
+	if (InterruptType == TX_INTERRUPT) {
+ 8000cf2:	683b      	ldr	r3, [r7, #0]
+ 8000cf4:	2b08      	cmp	r3, #8
+ 8000cf6:	d10f      	bne.n	8000d18 <uartInterruptDisable+0x30>
+		Base->CR1 &= ~(1 << 7);
+ 8000cf8:	687b      	ldr	r3, [r7, #4]
+ 8000cfa:	68db      	ldr	r3, [r3, #12]
+ 8000cfc:	f023 0280 	bic.w	r2, r3, #128	; 0x80
+ 8000d00:	687b      	ldr	r3, [r7, #4]
+ 8000d02:	60da      	str	r2, [r3, #12]
+
+		if (!(Base->CR1 & (1 << 7))) {
+ 8000d04:	687b      	ldr	r3, [r7, #4]
+ 8000d06:	68db      	ldr	r3, [r3, #12]
+ 8000d08:	f003 0380 	and.w	r3, r3, #128	; 0x80
+ 8000d0c:	2b00      	cmp	r3, #0
+ 8000d0e:	d101      	bne.n	8000d14 <uartInterruptDisable+0x2c>
+			return USART_TX_INTERRUPT_DISABLED;
+ 8000d10:	230c      	movs	r3, #12
+ 8000d12:	e014      	b.n	8000d3e <uartInterruptDisable+0x56>
+		} else {
+			return USART_TX_INTERRUPT_NOT_DISABLED;
+ 8000d14:	230d      	movs	r3, #13
+ 8000d16:	e012      	b.n	8000d3e <uartInterruptDisable+0x56>
+		}
+
+	} else if (InterruptType == RX_INTERRUPT) {
+ 8000d18:	683b      	ldr	r3, [r7, #0]
+ 8000d1a:	2b09      	cmp	r3, #9
+ 8000d1c:	d10f      	bne.n	8000d3e <uartInterruptDisable+0x56>
+		Base->CR1 &= ~(1 << 5);
+ 8000d1e:	687b      	ldr	r3, [r7, #4]
+ 8000d20:	68db      	ldr	r3, [r3, #12]
+ 8000d22:	f023 0220 	bic.w	r2, r3, #32
+ 8000d26:	687b      	ldr	r3, [r7, #4]
+ 8000d28:	60da      	str	r2, [r3, #12]
+		if (!(Base->CR1 & (1 << 5))) {
+ 8000d2a:	687b      	ldr	r3, [r7, #4]
+ 8000d2c:	68db      	ldr	r3, [r3, #12]
+ 8000d2e:	f003 0320 	and.w	r3, r3, #32
+ 8000d32:	2b00      	cmp	r3, #0
+ 8000d34:	d101      	bne.n	8000d3a <uartInterruptDisable+0x52>
+			return USART_RX_INTERRUPT_DISABLED;
+ 8000d36:	2310      	movs	r3, #16
+ 8000d38:	e001      	b.n	8000d3e <uartInterruptDisable+0x56>
+		} else {
+			return USART_RX_INTERRUPT_NOT_DISABLED;
+ 8000d3a:	2311      	movs	r3, #17
+ 8000d3c:	e7ff      	b.n	8000d3e <uartInterruptDisable+0x56>
+		}
+	}
+}
+ 8000d3e:	4618      	mov	r0, r3
+ 8000d40:	370c      	adds	r7, #12
+ 8000d42:	46bd      	mov	sp, r7
+ 8000d44:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8000d48:	4770      	bx	lr
+
+08000d4a <usartEnable>:
+
+
+uint8_t usartEnable(usart_register_t *_Base) {
+ 8000d4a:	b480      	push	{r7}
+ 8000d4c:	b083      	sub	sp, #12
+ 8000d4e:	af00      	add	r7, sp, #0
+ 8000d50:	6078      	str	r0, [r7, #4]
+
+	_Base->CR1 &= ~(1 << 13);
+ 8000d52:	687b      	ldr	r3, [r7, #4]
+ 8000d54:	68db      	ldr	r3, [r3, #12]
+ 8000d56:	f423 5200 	bic.w	r2, r3, #8192	; 0x2000
+ 8000d5a:	687b      	ldr	r3, [r7, #4]
+ 8000d5c:	60da      	str	r2, [r3, #12]
+	_Base->CR1 |= (1 << 13);
+ 8000d5e:	687b      	ldr	r3, [r7, #4]
+ 8000d60:	68db      	ldr	r3, [r3, #12]
+ 8000d62:	f443 5200 	orr.w	r2, r3, #8192	; 0x2000
+ 8000d66:	687b      	ldr	r3, [r7, #4]
+ 8000d68:	60da      	str	r2, [r3, #12]
+
+	if (!(_Base->CR1) && (1 << 13)) {
+ 8000d6a:	687b      	ldr	r3, [r7, #4]
+ 8000d6c:	68db      	ldr	r3, [r3, #12]
+ 8000d6e:	2b00      	cmp	r3, #0
+ 8000d70:	d101      	bne.n	8000d76 <usartEnable+0x2c>
+		return 0;
+ 8000d72:	2300      	movs	r3, #0
+ 8000d74:	e000      	b.n	8000d78 <usartEnable+0x2e>
+	} else {
+		return 1;
+ 8000d76:	2301      	movs	r3, #1
+	}
+}
+ 8000d78:	4618      	mov	r0, r3
+ 8000d7a:	370c      	adds	r7, #12
+ 8000d7c:	46bd      	mov	sp, r7
+ 8000d7e:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8000d82:	4770      	bx	lr
+
+08000d84 <std>:
+ 8000d84:	2300      	movs	r3, #0
+ 8000d86:	b510      	push	{r4, lr}
+ 8000d88:	4604      	mov	r4, r0
+ 8000d8a:	e9c0 3300 	strd	r3, r3, [r0]
+ 8000d8e:	e9c0 3304 	strd	r3, r3, [r0, #16]
+ 8000d92:	6083      	str	r3, [r0, #8]
+ 8000d94:	8181      	strh	r1, [r0, #12]
+ 8000d96:	6643      	str	r3, [r0, #100]	; 0x64
+ 8000d98:	81c2      	strh	r2, [r0, #14]
+ 8000d9a:	6183      	str	r3, [r0, #24]
+ 8000d9c:	4619      	mov	r1, r3
+ 8000d9e:	2208      	movs	r2, #8
+ 8000da0:	305c      	adds	r0, #92	; 0x5c
+ 8000da2:	f000 f9e5 	bl	8001170 <memset>
+ 8000da6:	4b0d      	ldr	r3, [pc, #52]	; (8000ddc <std+0x58>)
+ 8000da8:	6263      	str	r3, [r4, #36]	; 0x24
+ 8000daa:	4b0d      	ldr	r3, [pc, #52]	; (8000de0 <std+0x5c>)
+ 8000dac:	62a3      	str	r3, [r4, #40]	; 0x28
+ 8000dae:	4b0d      	ldr	r3, [pc, #52]	; (8000de4 <std+0x60>)
+ 8000db0:	62e3      	str	r3, [r4, #44]	; 0x2c
+ 8000db2:	4b0d      	ldr	r3, [pc, #52]	; (8000de8 <std+0x64>)
+ 8000db4:	6323      	str	r3, [r4, #48]	; 0x30
+ 8000db6:	4b0d      	ldr	r3, [pc, #52]	; (8000dec <std+0x68>)
+ 8000db8:	6224      	str	r4, [r4, #32]
+ 8000dba:	429c      	cmp	r4, r3
+ 8000dbc:	d006      	beq.n	8000dcc <std+0x48>
+ 8000dbe:	f103 0268 	add.w	r2, r3, #104	; 0x68
+ 8000dc2:	4294      	cmp	r4, r2
+ 8000dc4:	d002      	beq.n	8000dcc <std+0x48>
+ 8000dc6:	33d0      	adds	r3, #208	; 0xd0
+ 8000dc8:	429c      	cmp	r4, r3
+ 8000dca:	d105      	bne.n	8000dd8 <std+0x54>
+ 8000dcc:	f104 0058 	add.w	r0, r4, #88	; 0x58
+ 8000dd0:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 8000dd4:	f000 ba44 	b.w	8001260 <__retarget_lock_init_recursive>
+ 8000dd8:	bd10      	pop	{r4, pc}
+ 8000dda:	bf00      	nop
+ 8000ddc:	08000fc1 	.word	0x08000fc1
+ 8000de0:	08000fe3 	.word	0x08000fe3
+ 8000de4:	0800101b 	.word	0x0800101b
+ 8000de8:	0800103f 	.word	0x0800103f
+ 8000dec:	20000084 	.word	0x20000084
+
+08000df0 <stdio_exit_handler>:
+ 8000df0:	4a02      	ldr	r2, [pc, #8]	; (8000dfc <stdio_exit_handler+0xc>)
+ 8000df2:	4903      	ldr	r1, [pc, #12]	; (8000e00 <stdio_exit_handler+0x10>)
+ 8000df4:	4803      	ldr	r0, [pc, #12]	; (8000e04 <stdio_exit_handler+0x14>)
+ 8000df6:	f000 b869 	b.w	8000ecc <_fwalk_sglue>
+ 8000dfa:	bf00      	nop
+ 8000dfc:	20000000 	.word	0x20000000
+ 8000e00:	08001565 	.word	0x08001565
+ 8000e04:	2000000c 	.word	0x2000000c
+
+08000e08 <cleanup_stdio>:
+ 8000e08:	6841      	ldr	r1, [r0, #4]
+ 8000e0a:	4b0c      	ldr	r3, [pc, #48]	; (8000e3c <cleanup_stdio+0x34>)
+ 8000e0c:	4299      	cmp	r1, r3
+ 8000e0e:	b510      	push	{r4, lr}
+ 8000e10:	4604      	mov	r4, r0
+ 8000e12:	d001      	beq.n	8000e18 <cleanup_stdio+0x10>
+ 8000e14:	f000 fba6 	bl	8001564 <_fflush_r>
+ 8000e18:	68a1      	ldr	r1, [r4, #8]
+ 8000e1a:	4b09      	ldr	r3, [pc, #36]	; (8000e40 <cleanup_stdio+0x38>)
+ 8000e1c:	4299      	cmp	r1, r3
+ 8000e1e:	d002      	beq.n	8000e26 <cleanup_stdio+0x1e>
+ 8000e20:	4620      	mov	r0, r4
+ 8000e22:	f000 fb9f 	bl	8001564 <_fflush_r>
+ 8000e26:	68e1      	ldr	r1, [r4, #12]
+ 8000e28:	4b06      	ldr	r3, [pc, #24]	; (8000e44 <cleanup_stdio+0x3c>)
+ 8000e2a:	4299      	cmp	r1, r3
+ 8000e2c:	d004      	beq.n	8000e38 <cleanup_stdio+0x30>
+ 8000e2e:	4620      	mov	r0, r4
+ 8000e30:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 8000e34:	f000 bb96 	b.w	8001564 <_fflush_r>
+ 8000e38:	bd10      	pop	{r4, pc}
+ 8000e3a:	bf00      	nop
+ 8000e3c:	20000084 	.word	0x20000084
+ 8000e40:	200000ec 	.word	0x200000ec
+ 8000e44:	20000154 	.word	0x20000154
+
+08000e48 <global_stdio_init.part.0>:
+ 8000e48:	b510      	push	{r4, lr}
+ 8000e4a:	4b0b      	ldr	r3, [pc, #44]	; (8000e78 <global_stdio_init.part.0+0x30>)
+ 8000e4c:	4c0b      	ldr	r4, [pc, #44]	; (8000e7c <global_stdio_init.part.0+0x34>)
+ 8000e4e:	4a0c      	ldr	r2, [pc, #48]	; (8000e80 <global_stdio_init.part.0+0x38>)
+ 8000e50:	601a      	str	r2, [r3, #0]
+ 8000e52:	4620      	mov	r0, r4
+ 8000e54:	2200      	movs	r2, #0
+ 8000e56:	2104      	movs	r1, #4
+ 8000e58:	f7ff ff94 	bl	8000d84 <std>
+ 8000e5c:	f104 0068 	add.w	r0, r4, #104	; 0x68
+ 8000e60:	2201      	movs	r2, #1
+ 8000e62:	2109      	movs	r1, #9
+ 8000e64:	f7ff ff8e 	bl	8000d84 <std>
+ 8000e68:	f104 00d0 	add.w	r0, r4, #208	; 0xd0
+ 8000e6c:	2202      	movs	r2, #2
+ 8000e6e:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 8000e72:	2112      	movs	r1, #18
+ 8000e74:	f7ff bf86 	b.w	8000d84 <std>
+ 8000e78:	200001bc 	.word	0x200001bc
+ 8000e7c:	20000084 	.word	0x20000084
+ 8000e80:	08000df1 	.word	0x08000df1
+
+08000e84 <__sfp_lock_acquire>:
+ 8000e84:	4801      	ldr	r0, [pc, #4]	; (8000e8c <__sfp_lock_acquire+0x8>)
+ 8000e86:	f000 b9ec 	b.w	8001262 <__retarget_lock_acquire_recursive>
+ 8000e8a:	bf00      	nop
+ 8000e8c:	200001c5 	.word	0x200001c5
+
+08000e90 <__sfp_lock_release>:
+ 8000e90:	4801      	ldr	r0, [pc, #4]	; (8000e98 <__sfp_lock_release+0x8>)
+ 8000e92:	f000 b9e7 	b.w	8001264 <__retarget_lock_release_recursive>
+ 8000e96:	bf00      	nop
+ 8000e98:	200001c5 	.word	0x200001c5
+
+08000e9c <__sinit>:
+ 8000e9c:	b510      	push	{r4, lr}
+ 8000e9e:	4604      	mov	r4, r0
+ 8000ea0:	f7ff fff0 	bl	8000e84 <__sfp_lock_acquire>
+ 8000ea4:	6a23      	ldr	r3, [r4, #32]
+ 8000ea6:	b11b      	cbz	r3, 8000eb0 <__sinit+0x14>
+ 8000ea8:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 8000eac:	f7ff bff0 	b.w	8000e90 <__sfp_lock_release>
+ 8000eb0:	4b04      	ldr	r3, [pc, #16]	; (8000ec4 <__sinit+0x28>)
+ 8000eb2:	6223      	str	r3, [r4, #32]
+ 8000eb4:	4b04      	ldr	r3, [pc, #16]	; (8000ec8 <__sinit+0x2c>)
+ 8000eb6:	681b      	ldr	r3, [r3, #0]
+ 8000eb8:	2b00      	cmp	r3, #0
+ 8000eba:	d1f5      	bne.n	8000ea8 <__sinit+0xc>
+ 8000ebc:	f7ff ffc4 	bl	8000e48 <global_stdio_init.part.0>
+ 8000ec0:	e7f2      	b.n	8000ea8 <__sinit+0xc>
+ 8000ec2:	bf00      	nop
+ 8000ec4:	08000e09 	.word	0x08000e09
+ 8000ec8:	200001bc 	.word	0x200001bc
+
+08000ecc <_fwalk_sglue>:
+ 8000ecc:	e92d 43f8 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, lr}
+ 8000ed0:	4607      	mov	r7, r0
+ 8000ed2:	4688      	mov	r8, r1
+ 8000ed4:	4614      	mov	r4, r2
+ 8000ed6:	2600      	movs	r6, #0
+ 8000ed8:	e9d4 9501 	ldrd	r9, r5, [r4, #4]
+ 8000edc:	f1b9 0901 	subs.w	r9, r9, #1
+ 8000ee0:	d505      	bpl.n	8000eee <_fwalk_sglue+0x22>
+ 8000ee2:	6824      	ldr	r4, [r4, #0]
+ 8000ee4:	2c00      	cmp	r4, #0
+ 8000ee6:	d1f7      	bne.n	8000ed8 <_fwalk_sglue+0xc>
+ 8000ee8:	4630      	mov	r0, r6
+ 8000eea:	e8bd 83f8 	ldmia.w	sp!, {r3, r4, r5, r6, r7, r8, r9, pc}
+ 8000eee:	89ab      	ldrh	r3, [r5, #12]
+ 8000ef0:	2b01      	cmp	r3, #1
+ 8000ef2:	d907      	bls.n	8000f04 <_fwalk_sglue+0x38>
+ 8000ef4:	f9b5 300e 	ldrsh.w	r3, [r5, #14]
+ 8000ef8:	3301      	adds	r3, #1
+ 8000efa:	d003      	beq.n	8000f04 <_fwalk_sglue+0x38>
+ 8000efc:	4629      	mov	r1, r5
+ 8000efe:	4638      	mov	r0, r7
+ 8000f00:	47c0      	blx	r8
+ 8000f02:	4306      	orrs	r6, r0
+ 8000f04:	3568      	adds	r5, #104	; 0x68
+ 8000f06:	e7e9      	b.n	8000edc <_fwalk_sglue+0x10>
+
+08000f08 <_puts_r>:
+ 8000f08:	6a03      	ldr	r3, [r0, #32]
+ 8000f0a:	b570      	push	{r4, r5, r6, lr}
+ 8000f0c:	6884      	ldr	r4, [r0, #8]
+ 8000f0e:	4605      	mov	r5, r0
+ 8000f10:	460e      	mov	r6, r1
+ 8000f12:	b90b      	cbnz	r3, 8000f18 <_puts_r+0x10>
+ 8000f14:	f7ff ffc2 	bl	8000e9c <__sinit>
+ 8000f18:	6e63      	ldr	r3, [r4, #100]	; 0x64
+ 8000f1a:	07db      	lsls	r3, r3, #31
+ 8000f1c:	d405      	bmi.n	8000f2a <_puts_r+0x22>
+ 8000f1e:	89a3      	ldrh	r3, [r4, #12]
+ 8000f20:	0598      	lsls	r0, r3, #22
+ 8000f22:	d402      	bmi.n	8000f2a <_puts_r+0x22>
+ 8000f24:	6da0      	ldr	r0, [r4, #88]	; 0x58
+ 8000f26:	f000 f99c 	bl	8001262 <__retarget_lock_acquire_recursive>
+ 8000f2a:	89a3      	ldrh	r3, [r4, #12]
+ 8000f2c:	0719      	lsls	r1, r3, #28
+ 8000f2e:	d513      	bpl.n	8000f58 <_puts_r+0x50>
+ 8000f30:	6923      	ldr	r3, [r4, #16]
+ 8000f32:	b18b      	cbz	r3, 8000f58 <_puts_r+0x50>
+ 8000f34:	3e01      	subs	r6, #1
+ 8000f36:	68a3      	ldr	r3, [r4, #8]
+ 8000f38:	f816 1f01 	ldrb.w	r1, [r6, #1]!
+ 8000f3c:	3b01      	subs	r3, #1
+ 8000f3e:	60a3      	str	r3, [r4, #8]
+ 8000f40:	b9e9      	cbnz	r1, 8000f7e <_puts_r+0x76>
+ 8000f42:	2b00      	cmp	r3, #0
+ 8000f44:	da2e      	bge.n	8000fa4 <_puts_r+0x9c>
+ 8000f46:	4622      	mov	r2, r4
+ 8000f48:	210a      	movs	r1, #10
+ 8000f4a:	4628      	mov	r0, r5
+ 8000f4c:	f000 f87b 	bl	8001046 <__swbuf_r>
+ 8000f50:	3001      	adds	r0, #1
+ 8000f52:	d007      	beq.n	8000f64 <_puts_r+0x5c>
+ 8000f54:	250a      	movs	r5, #10
+ 8000f56:	e007      	b.n	8000f68 <_puts_r+0x60>
+ 8000f58:	4621      	mov	r1, r4
+ 8000f5a:	4628      	mov	r0, r5
+ 8000f5c:	f000 f8b0 	bl	80010c0 <__swsetup_r>
+ 8000f60:	2800      	cmp	r0, #0
+ 8000f62:	d0e7      	beq.n	8000f34 <_puts_r+0x2c>
+ 8000f64:	f04f 35ff 	mov.w	r5, #4294967295
+ 8000f68:	6e63      	ldr	r3, [r4, #100]	; 0x64
+ 8000f6a:	07da      	lsls	r2, r3, #31
+ 8000f6c:	d405      	bmi.n	8000f7a <_puts_r+0x72>
+ 8000f6e:	89a3      	ldrh	r3, [r4, #12]
+ 8000f70:	059b      	lsls	r3, r3, #22
+ 8000f72:	d402      	bmi.n	8000f7a <_puts_r+0x72>
+ 8000f74:	6da0      	ldr	r0, [r4, #88]	; 0x58
+ 8000f76:	f000 f975 	bl	8001264 <__retarget_lock_release_recursive>
+ 8000f7a:	4628      	mov	r0, r5
+ 8000f7c:	bd70      	pop	{r4, r5, r6, pc}
+ 8000f7e:	2b00      	cmp	r3, #0
+ 8000f80:	da04      	bge.n	8000f8c <_puts_r+0x84>
+ 8000f82:	69a2      	ldr	r2, [r4, #24]
+ 8000f84:	429a      	cmp	r2, r3
+ 8000f86:	dc06      	bgt.n	8000f96 <_puts_r+0x8e>
+ 8000f88:	290a      	cmp	r1, #10
+ 8000f8a:	d004      	beq.n	8000f96 <_puts_r+0x8e>
+ 8000f8c:	6823      	ldr	r3, [r4, #0]
+ 8000f8e:	1c5a      	adds	r2, r3, #1
+ 8000f90:	6022      	str	r2, [r4, #0]
+ 8000f92:	7019      	strb	r1, [r3, #0]
+ 8000f94:	e7cf      	b.n	8000f36 <_puts_r+0x2e>
+ 8000f96:	4622      	mov	r2, r4
+ 8000f98:	4628      	mov	r0, r5
+ 8000f9a:	f000 f854 	bl	8001046 <__swbuf_r>
+ 8000f9e:	3001      	adds	r0, #1
+ 8000fa0:	d1c9      	bne.n	8000f36 <_puts_r+0x2e>
+ 8000fa2:	e7df      	b.n	8000f64 <_puts_r+0x5c>
+ 8000fa4:	6823      	ldr	r3, [r4, #0]
+ 8000fa6:	250a      	movs	r5, #10
+ 8000fa8:	1c5a      	adds	r2, r3, #1
+ 8000faa:	6022      	str	r2, [r4, #0]
+ 8000fac:	701d      	strb	r5, [r3, #0]
+ 8000fae:	e7db      	b.n	8000f68 <_puts_r+0x60>
+
+08000fb0 <puts>:
+ 8000fb0:	4b02      	ldr	r3, [pc, #8]	; (8000fbc <puts+0xc>)
+ 8000fb2:	4601      	mov	r1, r0
+ 8000fb4:	6818      	ldr	r0, [r3, #0]
+ 8000fb6:	f7ff bfa7 	b.w	8000f08 <_puts_r>
+ 8000fba:	bf00      	nop
+ 8000fbc:	20000058 	.word	0x20000058
+
+08000fc0 <__sread>:
+ 8000fc0:	b510      	push	{r4, lr}
+ 8000fc2:	460c      	mov	r4, r1
+ 8000fc4:	f9b1 100e 	ldrsh.w	r1, [r1, #14]
+ 8000fc8:	f000 f8fc 	bl	80011c4 <_read_r>
+ 8000fcc:	2800      	cmp	r0, #0
+ 8000fce:	bfab      	itete	ge
+ 8000fd0:	6d63      	ldrge	r3, [r4, #84]	; 0x54
+ 8000fd2:	89a3      	ldrhlt	r3, [r4, #12]
+ 8000fd4:	181b      	addge	r3, r3, r0
+ 8000fd6:	f423 5380 	biclt.w	r3, r3, #4096	; 0x1000
+ 8000fda:	bfac      	ite	ge
+ 8000fdc:	6563      	strge	r3, [r4, #84]	; 0x54
+ 8000fde:	81a3      	strhlt	r3, [r4, #12]
+ 8000fe0:	bd10      	pop	{r4, pc}
+
+08000fe2 <__swrite>:
+ 8000fe2:	e92d 41f0 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
+ 8000fe6:	461f      	mov	r7, r3
+ 8000fe8:	898b      	ldrh	r3, [r1, #12]
+ 8000fea:	05db      	lsls	r3, r3, #23
+ 8000fec:	4605      	mov	r5, r0
+ 8000fee:	460c      	mov	r4, r1
+ 8000ff0:	4616      	mov	r6, r2
+ 8000ff2:	d505      	bpl.n	8001000 <__swrite+0x1e>
+ 8000ff4:	f9b1 100e 	ldrsh.w	r1, [r1, #14]
+ 8000ff8:	2302      	movs	r3, #2
+ 8000ffa:	2200      	movs	r2, #0
+ 8000ffc:	f000 f8d0 	bl	80011a0 <_lseek_r>
+ 8001000:	89a3      	ldrh	r3, [r4, #12]
+ 8001002:	f9b4 100e 	ldrsh.w	r1, [r4, #14]
+ 8001006:	f423 5380 	bic.w	r3, r3, #4096	; 0x1000
+ 800100a:	81a3      	strh	r3, [r4, #12]
+ 800100c:	4632      	mov	r2, r6
+ 800100e:	463b      	mov	r3, r7
+ 8001010:	4628      	mov	r0, r5
+ 8001012:	e8bd 41f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, lr}
+ 8001016:	f000 b8e7 	b.w	80011e8 <_write_r>
+
+0800101a <__sseek>:
+ 800101a:	b510      	push	{r4, lr}
+ 800101c:	460c      	mov	r4, r1
+ 800101e:	f9b1 100e 	ldrsh.w	r1, [r1, #14]
+ 8001022:	f000 f8bd 	bl	80011a0 <_lseek_r>
+ 8001026:	1c43      	adds	r3, r0, #1
+ 8001028:	89a3      	ldrh	r3, [r4, #12]
+ 800102a:	bf15      	itete	ne
+ 800102c:	6560      	strne	r0, [r4, #84]	; 0x54
+ 800102e:	f423 5380 	biceq.w	r3, r3, #4096	; 0x1000
+ 8001032:	f443 5380 	orrne.w	r3, r3, #4096	; 0x1000
+ 8001036:	81a3      	strheq	r3, [r4, #12]
+ 8001038:	bf18      	it	ne
+ 800103a:	81a3      	strhne	r3, [r4, #12]
+ 800103c:	bd10      	pop	{r4, pc}
+
+0800103e <__sclose>:
+ 800103e:	f9b1 100e 	ldrsh.w	r1, [r1, #14]
+ 8001042:	f000 b89d 	b.w	8001180 <_close_r>
+
+08001046 <__swbuf_r>:
+ 8001046:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 8001048:	460e      	mov	r6, r1
+ 800104a:	4614      	mov	r4, r2
+ 800104c:	4605      	mov	r5, r0
+ 800104e:	b118      	cbz	r0, 8001058 <__swbuf_r+0x12>
+ 8001050:	6a03      	ldr	r3, [r0, #32]
+ 8001052:	b90b      	cbnz	r3, 8001058 <__swbuf_r+0x12>
+ 8001054:	f7ff ff22 	bl	8000e9c <__sinit>
+ 8001058:	69a3      	ldr	r3, [r4, #24]
+ 800105a:	60a3      	str	r3, [r4, #8]
+ 800105c:	89a3      	ldrh	r3, [r4, #12]
+ 800105e:	071a      	lsls	r2, r3, #28
+ 8001060:	d525      	bpl.n	80010ae <__swbuf_r+0x68>
+ 8001062:	6923      	ldr	r3, [r4, #16]
+ 8001064:	b31b      	cbz	r3, 80010ae <__swbuf_r+0x68>
+ 8001066:	6823      	ldr	r3, [r4, #0]
+ 8001068:	6922      	ldr	r2, [r4, #16]
+ 800106a:	1a98      	subs	r0, r3, r2
+ 800106c:	6963      	ldr	r3, [r4, #20]
+ 800106e:	b2f6      	uxtb	r6, r6
+ 8001070:	4283      	cmp	r3, r0
+ 8001072:	4637      	mov	r7, r6
+ 8001074:	dc04      	bgt.n	8001080 <__swbuf_r+0x3a>
+ 8001076:	4621      	mov	r1, r4
+ 8001078:	4628      	mov	r0, r5
+ 800107a:	f000 fa73 	bl	8001564 <_fflush_r>
+ 800107e:	b9e0      	cbnz	r0, 80010ba <__swbuf_r+0x74>
+ 8001080:	68a3      	ldr	r3, [r4, #8]
+ 8001082:	3b01      	subs	r3, #1
+ 8001084:	60a3      	str	r3, [r4, #8]
+ 8001086:	6823      	ldr	r3, [r4, #0]
+ 8001088:	1c5a      	adds	r2, r3, #1
+ 800108a:	6022      	str	r2, [r4, #0]
+ 800108c:	701e      	strb	r6, [r3, #0]
+ 800108e:	6962      	ldr	r2, [r4, #20]
+ 8001090:	1c43      	adds	r3, r0, #1
+ 8001092:	429a      	cmp	r2, r3
+ 8001094:	d004      	beq.n	80010a0 <__swbuf_r+0x5a>
+ 8001096:	89a3      	ldrh	r3, [r4, #12]
+ 8001098:	07db      	lsls	r3, r3, #31
+ 800109a:	d506      	bpl.n	80010aa <__swbuf_r+0x64>
+ 800109c:	2e0a      	cmp	r6, #10
+ 800109e:	d104      	bne.n	80010aa <__swbuf_r+0x64>
+ 80010a0:	4621      	mov	r1, r4
+ 80010a2:	4628      	mov	r0, r5
+ 80010a4:	f000 fa5e 	bl	8001564 <_fflush_r>
+ 80010a8:	b938      	cbnz	r0, 80010ba <__swbuf_r+0x74>
+ 80010aa:	4638      	mov	r0, r7
+ 80010ac:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
+ 80010ae:	4621      	mov	r1, r4
+ 80010b0:	4628      	mov	r0, r5
+ 80010b2:	f000 f805 	bl	80010c0 <__swsetup_r>
+ 80010b6:	2800      	cmp	r0, #0
+ 80010b8:	d0d5      	beq.n	8001066 <__swbuf_r+0x20>
+ 80010ba:	f04f 37ff 	mov.w	r7, #4294967295
+ 80010be:	e7f4      	b.n	80010aa <__swbuf_r+0x64>
+
+080010c0 <__swsetup_r>:
+ 80010c0:	b538      	push	{r3, r4, r5, lr}
+ 80010c2:	4b2a      	ldr	r3, [pc, #168]	; (800116c <__swsetup_r+0xac>)
+ 80010c4:	4605      	mov	r5, r0
+ 80010c6:	6818      	ldr	r0, [r3, #0]
+ 80010c8:	460c      	mov	r4, r1
+ 80010ca:	b118      	cbz	r0, 80010d4 <__swsetup_r+0x14>
+ 80010cc:	6a03      	ldr	r3, [r0, #32]
+ 80010ce:	b90b      	cbnz	r3, 80010d4 <__swsetup_r+0x14>
+ 80010d0:	f7ff fee4 	bl	8000e9c <__sinit>
+ 80010d4:	89a3      	ldrh	r3, [r4, #12]
+ 80010d6:	f9b4 200c 	ldrsh.w	r2, [r4, #12]
+ 80010da:	0718      	lsls	r0, r3, #28
+ 80010dc:	d422      	bmi.n	8001124 <__swsetup_r+0x64>
+ 80010de:	06d9      	lsls	r1, r3, #27
+ 80010e0:	d407      	bmi.n	80010f2 <__swsetup_r+0x32>
+ 80010e2:	2309      	movs	r3, #9
+ 80010e4:	602b      	str	r3, [r5, #0]
+ 80010e6:	f042 0340 	orr.w	r3, r2, #64	; 0x40
+ 80010ea:	81a3      	strh	r3, [r4, #12]
+ 80010ec:	f04f 30ff 	mov.w	r0, #4294967295
+ 80010f0:	e034      	b.n	800115c <__swsetup_r+0x9c>
+ 80010f2:	0758      	lsls	r0, r3, #29
+ 80010f4:	d512      	bpl.n	800111c <__swsetup_r+0x5c>
+ 80010f6:	6b61      	ldr	r1, [r4, #52]	; 0x34
+ 80010f8:	b141      	cbz	r1, 800110c <__swsetup_r+0x4c>
+ 80010fa:	f104 0344 	add.w	r3, r4, #68	; 0x44
+ 80010fe:	4299      	cmp	r1, r3
+ 8001100:	d002      	beq.n	8001108 <__swsetup_r+0x48>
+ 8001102:	4628      	mov	r0, r5
+ 8001104:	f000 f8b0 	bl	8001268 <_free_r>
+ 8001108:	2300      	movs	r3, #0
+ 800110a:	6363      	str	r3, [r4, #52]	; 0x34
+ 800110c:	89a3      	ldrh	r3, [r4, #12]
+ 800110e:	f023 0324 	bic.w	r3, r3, #36	; 0x24
+ 8001112:	81a3      	strh	r3, [r4, #12]
+ 8001114:	2300      	movs	r3, #0
+ 8001116:	6063      	str	r3, [r4, #4]
+ 8001118:	6923      	ldr	r3, [r4, #16]
+ 800111a:	6023      	str	r3, [r4, #0]
+ 800111c:	89a3      	ldrh	r3, [r4, #12]
+ 800111e:	f043 0308 	orr.w	r3, r3, #8
+ 8001122:	81a3      	strh	r3, [r4, #12]
+ 8001124:	6923      	ldr	r3, [r4, #16]
+ 8001126:	b94b      	cbnz	r3, 800113c <__swsetup_r+0x7c>
+ 8001128:	89a3      	ldrh	r3, [r4, #12]
+ 800112a:	f403 7320 	and.w	r3, r3, #640	; 0x280
+ 800112e:	f5b3 7f00 	cmp.w	r3, #512	; 0x200
+ 8001132:	d003      	beq.n	800113c <__swsetup_r+0x7c>
+ 8001134:	4621      	mov	r1, r4
+ 8001136:	4628      	mov	r0, r5
+ 8001138:	f000 fa62 	bl	8001600 <__smakebuf_r>
+ 800113c:	89a0      	ldrh	r0, [r4, #12]
+ 800113e:	f9b4 200c 	ldrsh.w	r2, [r4, #12]
+ 8001142:	f010 0301 	ands.w	r3, r0, #1
+ 8001146:	d00a      	beq.n	800115e <__swsetup_r+0x9e>
+ 8001148:	2300      	movs	r3, #0
+ 800114a:	60a3      	str	r3, [r4, #8]
+ 800114c:	6963      	ldr	r3, [r4, #20]
+ 800114e:	425b      	negs	r3, r3
+ 8001150:	61a3      	str	r3, [r4, #24]
+ 8001152:	6923      	ldr	r3, [r4, #16]
+ 8001154:	b943      	cbnz	r3, 8001168 <__swsetup_r+0xa8>
+ 8001156:	f010 0080 	ands.w	r0, r0, #128	; 0x80
+ 800115a:	d1c4      	bne.n	80010e6 <__swsetup_r+0x26>
+ 800115c:	bd38      	pop	{r3, r4, r5, pc}
+ 800115e:	0781      	lsls	r1, r0, #30
+ 8001160:	bf58      	it	pl
+ 8001162:	6963      	ldrpl	r3, [r4, #20]
+ 8001164:	60a3      	str	r3, [r4, #8]
+ 8001166:	e7f4      	b.n	8001152 <__swsetup_r+0x92>
+ 8001168:	2000      	movs	r0, #0
+ 800116a:	e7f7      	b.n	800115c <__swsetup_r+0x9c>
+ 800116c:	20000058 	.word	0x20000058
+
+08001170 <memset>:
+ 8001170:	4402      	add	r2, r0
+ 8001172:	4603      	mov	r3, r0
+ 8001174:	4293      	cmp	r3, r2
+ 8001176:	d100      	bne.n	800117a <memset+0xa>
+ 8001178:	4770      	bx	lr
+ 800117a:	f803 1b01 	strb.w	r1, [r3], #1
+ 800117e:	e7f9      	b.n	8001174 <memset+0x4>
+
+08001180 <_close_r>:
+ 8001180:	b538      	push	{r3, r4, r5, lr}
+ 8001182:	4d06      	ldr	r5, [pc, #24]	; (800119c <_close_r+0x1c>)
+ 8001184:	2300      	movs	r3, #0
+ 8001186:	4604      	mov	r4, r0
+ 8001188:	4608      	mov	r0, r1
+ 800118a:	602b      	str	r3, [r5, #0]
+ 800118c:	f7ff f937 	bl	80003fe <_close>
+ 8001190:	1c43      	adds	r3, r0, #1
+ 8001192:	d102      	bne.n	800119a <_close_r+0x1a>
+ 8001194:	682b      	ldr	r3, [r5, #0]
+ 8001196:	b103      	cbz	r3, 800119a <_close_r+0x1a>
+ 8001198:	6023      	str	r3, [r4, #0]
+ 800119a:	bd38      	pop	{r3, r4, r5, pc}
+ 800119c:	200001c0 	.word	0x200001c0
+
+080011a0 <_lseek_r>:
+ 80011a0:	b538      	push	{r3, r4, r5, lr}
+ 80011a2:	4d07      	ldr	r5, [pc, #28]	; (80011c0 <_lseek_r+0x20>)
+ 80011a4:	4604      	mov	r4, r0
+ 80011a6:	4608      	mov	r0, r1
+ 80011a8:	4611      	mov	r1, r2
+ 80011aa:	2200      	movs	r2, #0
+ 80011ac:	602a      	str	r2, [r5, #0]
+ 80011ae:	461a      	mov	r2, r3
+ 80011b0:	f7ff f94c 	bl	800044c <_lseek>
+ 80011b4:	1c43      	adds	r3, r0, #1
+ 80011b6:	d102      	bne.n	80011be <_lseek_r+0x1e>
+ 80011b8:	682b      	ldr	r3, [r5, #0]
+ 80011ba:	b103      	cbz	r3, 80011be <_lseek_r+0x1e>
+ 80011bc:	6023      	str	r3, [r4, #0]
+ 80011be:	bd38      	pop	{r3, r4, r5, pc}
+ 80011c0:	200001c0 	.word	0x200001c0
+
+080011c4 <_read_r>:
+ 80011c4:	b538      	push	{r3, r4, r5, lr}
+ 80011c6:	4d07      	ldr	r5, [pc, #28]	; (80011e4 <_read_r+0x20>)
+ 80011c8:	4604      	mov	r4, r0
+ 80011ca:	4608      	mov	r0, r1
+ 80011cc:	4611      	mov	r1, r2
+ 80011ce:	2200      	movs	r2, #0
+ 80011d0:	602a      	str	r2, [r5, #0]
+ 80011d2:	461a      	mov	r2, r3
+ 80011d4:	f7ff f8da 	bl	800038c <_read>
+ 80011d8:	1c43      	adds	r3, r0, #1
+ 80011da:	d102      	bne.n	80011e2 <_read_r+0x1e>
+ 80011dc:	682b      	ldr	r3, [r5, #0]
+ 80011de:	b103      	cbz	r3, 80011e2 <_read_r+0x1e>
+ 80011e0:	6023      	str	r3, [r4, #0]
+ 80011e2:	bd38      	pop	{r3, r4, r5, pc}
+ 80011e4:	200001c0 	.word	0x200001c0
+
+080011e8 <_write_r>:
+ 80011e8:	b538      	push	{r3, r4, r5, lr}
+ 80011ea:	4d07      	ldr	r5, [pc, #28]	; (8001208 <_write_r+0x20>)
+ 80011ec:	4604      	mov	r4, r0
+ 80011ee:	4608      	mov	r0, r1
+ 80011f0:	4611      	mov	r1, r2
+ 80011f2:	2200      	movs	r2, #0
+ 80011f4:	602a      	str	r2, [r5, #0]
+ 80011f6:	461a      	mov	r2, r3
+ 80011f8:	f7ff f8e5 	bl	80003c6 <_write>
+ 80011fc:	1c43      	adds	r3, r0, #1
+ 80011fe:	d102      	bne.n	8001206 <_write_r+0x1e>
+ 8001200:	682b      	ldr	r3, [r5, #0]
+ 8001202:	b103      	cbz	r3, 8001206 <_write_r+0x1e>
+ 8001204:	6023      	str	r3, [r4, #0]
+ 8001206:	bd38      	pop	{r3, r4, r5, pc}
+ 8001208:	200001c0 	.word	0x200001c0
+
+0800120c <__errno>:
+ 800120c:	4b01      	ldr	r3, [pc, #4]	; (8001214 <__errno+0x8>)
+ 800120e:	6818      	ldr	r0, [r3, #0]
+ 8001210:	4770      	bx	lr
+ 8001212:	bf00      	nop
+ 8001214:	20000058 	.word	0x20000058
+
+08001218 <__libc_init_array>:
+ 8001218:	b570      	push	{r4, r5, r6, lr}
+ 800121a:	4d0d      	ldr	r5, [pc, #52]	; (8001250 <__libc_init_array+0x38>)
+ 800121c:	4c0d      	ldr	r4, [pc, #52]	; (8001254 <__libc_init_array+0x3c>)
+ 800121e:	1b64      	subs	r4, r4, r5
+ 8001220:	10a4      	asrs	r4, r4, #2
+ 8001222:	2600      	movs	r6, #0
+ 8001224:	42a6      	cmp	r6, r4
+ 8001226:	d109      	bne.n	800123c <__libc_init_array+0x24>
+ 8001228:	4d0b      	ldr	r5, [pc, #44]	; (8001258 <__libc_init_array+0x40>)
+ 800122a:	4c0c      	ldr	r4, [pc, #48]	; (800125c <__libc_init_array+0x44>)
+ 800122c:	f000 fa56 	bl	80016dc <_init>
+ 8001230:	1b64      	subs	r4, r4, r5
+ 8001232:	10a4      	asrs	r4, r4, #2
+ 8001234:	2600      	movs	r6, #0
+ 8001236:	42a6      	cmp	r6, r4
+ 8001238:	d105      	bne.n	8001246 <__libc_init_array+0x2e>
+ 800123a:	bd70      	pop	{r4, r5, r6, pc}
+ 800123c:	f855 3b04 	ldr.w	r3, [r5], #4
+ 8001240:	4798      	blx	r3
+ 8001242:	3601      	adds	r6, #1
+ 8001244:	e7ee      	b.n	8001224 <__libc_init_array+0xc>
+ 8001246:	f855 3b04 	ldr.w	r3, [r5], #4
+ 800124a:	4798      	blx	r3
+ 800124c:	3601      	adds	r6, #1
+ 800124e:	e7f2      	b.n	8001236 <__libc_init_array+0x1e>
+ 8001250:	08001714 	.word	0x08001714
+ 8001254:	08001714 	.word	0x08001714
+ 8001258:	08001714 	.word	0x08001714
+ 800125c:	08001718 	.word	0x08001718
+
+08001260 <__retarget_lock_init_recursive>:
+ 8001260:	4770      	bx	lr
+
+08001262 <__retarget_lock_acquire_recursive>:
+ 8001262:	4770      	bx	lr
+
+08001264 <__retarget_lock_release_recursive>:
+ 8001264:	4770      	bx	lr
+	...
+
+08001268 <_free_r>:
+ 8001268:	b537      	push	{r0, r1, r2, r4, r5, lr}
+ 800126a:	2900      	cmp	r1, #0
+ 800126c:	d044      	beq.n	80012f8 <_free_r+0x90>
+ 800126e:	f851 3c04 	ldr.w	r3, [r1, #-4]
+ 8001272:	9001      	str	r0, [sp, #4]
+ 8001274:	2b00      	cmp	r3, #0
+ 8001276:	f1a1 0404 	sub.w	r4, r1, #4
+ 800127a:	bfb8      	it	lt
+ 800127c:	18e4      	addlt	r4, r4, r3
+ 800127e:	f000 f8df 	bl	8001440 <__malloc_lock>
+ 8001282:	4a1e      	ldr	r2, [pc, #120]	; (80012fc <_free_r+0x94>)
+ 8001284:	9801      	ldr	r0, [sp, #4]
+ 8001286:	6813      	ldr	r3, [r2, #0]
+ 8001288:	b933      	cbnz	r3, 8001298 <_free_r+0x30>
+ 800128a:	6063      	str	r3, [r4, #4]
+ 800128c:	6014      	str	r4, [r2, #0]
+ 800128e:	b003      	add	sp, #12
+ 8001290:	e8bd 4030 	ldmia.w	sp!, {r4, r5, lr}
+ 8001294:	f000 b8da 	b.w	800144c <__malloc_unlock>
+ 8001298:	42a3      	cmp	r3, r4
+ 800129a:	d908      	bls.n	80012ae <_free_r+0x46>
+ 800129c:	6825      	ldr	r5, [r4, #0]
+ 800129e:	1961      	adds	r1, r4, r5
+ 80012a0:	428b      	cmp	r3, r1
+ 80012a2:	bf01      	itttt	eq
+ 80012a4:	6819      	ldreq	r1, [r3, #0]
+ 80012a6:	685b      	ldreq	r3, [r3, #4]
+ 80012a8:	1949      	addeq	r1, r1, r5
+ 80012aa:	6021      	streq	r1, [r4, #0]
+ 80012ac:	e7ed      	b.n	800128a <_free_r+0x22>
+ 80012ae:	461a      	mov	r2, r3
+ 80012b0:	685b      	ldr	r3, [r3, #4]
+ 80012b2:	b10b      	cbz	r3, 80012b8 <_free_r+0x50>
+ 80012b4:	42a3      	cmp	r3, r4
+ 80012b6:	d9fa      	bls.n	80012ae <_free_r+0x46>
+ 80012b8:	6811      	ldr	r1, [r2, #0]
+ 80012ba:	1855      	adds	r5, r2, r1
+ 80012bc:	42a5      	cmp	r5, r4
+ 80012be:	d10b      	bne.n	80012d8 <_free_r+0x70>
+ 80012c0:	6824      	ldr	r4, [r4, #0]
+ 80012c2:	4421      	add	r1, r4
+ 80012c4:	1854      	adds	r4, r2, r1
+ 80012c6:	42a3      	cmp	r3, r4
+ 80012c8:	6011      	str	r1, [r2, #0]
+ 80012ca:	d1e0      	bne.n	800128e <_free_r+0x26>
+ 80012cc:	681c      	ldr	r4, [r3, #0]
+ 80012ce:	685b      	ldr	r3, [r3, #4]
+ 80012d0:	6053      	str	r3, [r2, #4]
+ 80012d2:	440c      	add	r4, r1
+ 80012d4:	6014      	str	r4, [r2, #0]
+ 80012d6:	e7da      	b.n	800128e <_free_r+0x26>
+ 80012d8:	d902      	bls.n	80012e0 <_free_r+0x78>
+ 80012da:	230c      	movs	r3, #12
+ 80012dc:	6003      	str	r3, [r0, #0]
+ 80012de:	e7d6      	b.n	800128e <_free_r+0x26>
+ 80012e0:	6825      	ldr	r5, [r4, #0]
+ 80012e2:	1961      	adds	r1, r4, r5
+ 80012e4:	428b      	cmp	r3, r1
+ 80012e6:	bf04      	itt	eq
+ 80012e8:	6819      	ldreq	r1, [r3, #0]
+ 80012ea:	685b      	ldreq	r3, [r3, #4]
+ 80012ec:	6063      	str	r3, [r4, #4]
+ 80012ee:	bf04      	itt	eq
+ 80012f0:	1949      	addeq	r1, r1, r5
+ 80012f2:	6021      	streq	r1, [r4, #0]
+ 80012f4:	6054      	str	r4, [r2, #4]
+ 80012f6:	e7ca      	b.n	800128e <_free_r+0x26>
+ 80012f8:	b003      	add	sp, #12
+ 80012fa:	bd30      	pop	{r4, r5, pc}
+ 80012fc:	200001c8 	.word	0x200001c8
+
+08001300 <sbrk_aligned>:
+ 8001300:	b570      	push	{r4, r5, r6, lr}
+ 8001302:	4e0e      	ldr	r6, [pc, #56]	; (800133c <sbrk_aligned+0x3c>)
+ 8001304:	460c      	mov	r4, r1
+ 8001306:	6831      	ldr	r1, [r6, #0]
+ 8001308:	4605      	mov	r5, r0
+ 800130a:	b911      	cbnz	r1, 8001312 <sbrk_aligned+0x12>
+ 800130c:	f000 f9d6 	bl	80016bc <_sbrk_r>
+ 8001310:	6030      	str	r0, [r6, #0]
+ 8001312:	4621      	mov	r1, r4
+ 8001314:	4628      	mov	r0, r5
+ 8001316:	f000 f9d1 	bl	80016bc <_sbrk_r>
+ 800131a:	1c43      	adds	r3, r0, #1
+ 800131c:	d00a      	beq.n	8001334 <sbrk_aligned+0x34>
+ 800131e:	1cc4      	adds	r4, r0, #3
+ 8001320:	f024 0403 	bic.w	r4, r4, #3
+ 8001324:	42a0      	cmp	r0, r4
+ 8001326:	d007      	beq.n	8001338 <sbrk_aligned+0x38>
+ 8001328:	1a21      	subs	r1, r4, r0
+ 800132a:	4628      	mov	r0, r5
+ 800132c:	f000 f9c6 	bl	80016bc <_sbrk_r>
+ 8001330:	3001      	adds	r0, #1
+ 8001332:	d101      	bne.n	8001338 <sbrk_aligned+0x38>
+ 8001334:	f04f 34ff 	mov.w	r4, #4294967295
+ 8001338:	4620      	mov	r0, r4
+ 800133a:	bd70      	pop	{r4, r5, r6, pc}
+ 800133c:	200001cc 	.word	0x200001cc
+
+08001340 <_malloc_r>:
+ 8001340:	e92d 43f8 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, lr}
+ 8001344:	1ccd      	adds	r5, r1, #3
+ 8001346:	f025 0503 	bic.w	r5, r5, #3
+ 800134a:	3508      	adds	r5, #8
+ 800134c:	2d0c      	cmp	r5, #12
+ 800134e:	bf38      	it	cc
+ 8001350:	250c      	movcc	r5, #12
+ 8001352:	2d00      	cmp	r5, #0
+ 8001354:	4607      	mov	r7, r0
+ 8001356:	db01      	blt.n	800135c <_malloc_r+0x1c>
+ 8001358:	42a9      	cmp	r1, r5
+ 800135a:	d905      	bls.n	8001368 <_malloc_r+0x28>
+ 800135c:	230c      	movs	r3, #12
+ 800135e:	603b      	str	r3, [r7, #0]
+ 8001360:	2600      	movs	r6, #0
+ 8001362:	4630      	mov	r0, r6
+ 8001364:	e8bd 83f8 	ldmia.w	sp!, {r3, r4, r5, r6, r7, r8, r9, pc}
+ 8001368:	f8df 80d0 	ldr.w	r8, [pc, #208]	; 800143c <_malloc_r+0xfc>
+ 800136c:	f000 f868 	bl	8001440 <__malloc_lock>
+ 8001370:	f8d8 3000 	ldr.w	r3, [r8]
+ 8001374:	461c      	mov	r4, r3
+ 8001376:	bb5c      	cbnz	r4, 80013d0 <_malloc_r+0x90>
+ 8001378:	4629      	mov	r1, r5
+ 800137a:	4638      	mov	r0, r7
+ 800137c:	f7ff ffc0 	bl	8001300 <sbrk_aligned>
+ 8001380:	1c43      	adds	r3, r0, #1
+ 8001382:	4604      	mov	r4, r0
+ 8001384:	d155      	bne.n	8001432 <_malloc_r+0xf2>
+ 8001386:	f8d8 4000 	ldr.w	r4, [r8]
+ 800138a:	4626      	mov	r6, r4
+ 800138c:	2e00      	cmp	r6, #0
+ 800138e:	d145      	bne.n	800141c <_malloc_r+0xdc>
+ 8001390:	2c00      	cmp	r4, #0
+ 8001392:	d048      	beq.n	8001426 <_malloc_r+0xe6>
+ 8001394:	6823      	ldr	r3, [r4, #0]
+ 8001396:	4631      	mov	r1, r6
+ 8001398:	4638      	mov	r0, r7
+ 800139a:	eb04 0903 	add.w	r9, r4, r3
+ 800139e:	f000 f98d 	bl	80016bc <_sbrk_r>
+ 80013a2:	4581      	cmp	r9, r0
+ 80013a4:	d13f      	bne.n	8001426 <_malloc_r+0xe6>
+ 80013a6:	6821      	ldr	r1, [r4, #0]
+ 80013a8:	1a6d      	subs	r5, r5, r1
+ 80013aa:	4629      	mov	r1, r5
+ 80013ac:	4638      	mov	r0, r7
+ 80013ae:	f7ff ffa7 	bl	8001300 <sbrk_aligned>
+ 80013b2:	3001      	adds	r0, #1
+ 80013b4:	d037      	beq.n	8001426 <_malloc_r+0xe6>
+ 80013b6:	6823      	ldr	r3, [r4, #0]
+ 80013b8:	442b      	add	r3, r5
+ 80013ba:	6023      	str	r3, [r4, #0]
+ 80013bc:	f8d8 3000 	ldr.w	r3, [r8]
+ 80013c0:	2b00      	cmp	r3, #0
+ 80013c2:	d038      	beq.n	8001436 <_malloc_r+0xf6>
+ 80013c4:	685a      	ldr	r2, [r3, #4]
+ 80013c6:	42a2      	cmp	r2, r4
+ 80013c8:	d12b      	bne.n	8001422 <_malloc_r+0xe2>
+ 80013ca:	2200      	movs	r2, #0
+ 80013cc:	605a      	str	r2, [r3, #4]
+ 80013ce:	e00f      	b.n	80013f0 <_malloc_r+0xb0>
+ 80013d0:	6822      	ldr	r2, [r4, #0]
+ 80013d2:	1b52      	subs	r2, r2, r5
+ 80013d4:	d41f      	bmi.n	8001416 <_malloc_r+0xd6>
+ 80013d6:	2a0b      	cmp	r2, #11
+ 80013d8:	d917      	bls.n	800140a <_malloc_r+0xca>
+ 80013da:	1961      	adds	r1, r4, r5
+ 80013dc:	42a3      	cmp	r3, r4
+ 80013de:	6025      	str	r5, [r4, #0]
+ 80013e0:	bf18      	it	ne
+ 80013e2:	6059      	strne	r1, [r3, #4]
+ 80013e4:	6863      	ldr	r3, [r4, #4]
+ 80013e6:	bf08      	it	eq
+ 80013e8:	f8c8 1000 	streq.w	r1, [r8]
+ 80013ec:	5162      	str	r2, [r4, r5]
+ 80013ee:	604b      	str	r3, [r1, #4]
+ 80013f0:	4638      	mov	r0, r7
+ 80013f2:	f104 060b 	add.w	r6, r4, #11
+ 80013f6:	f000 f829 	bl	800144c <__malloc_unlock>
+ 80013fa:	f026 0607 	bic.w	r6, r6, #7
+ 80013fe:	1d23      	adds	r3, r4, #4
+ 8001400:	1af2      	subs	r2, r6, r3
+ 8001402:	d0ae      	beq.n	8001362 <_malloc_r+0x22>
+ 8001404:	1b9b      	subs	r3, r3, r6
+ 8001406:	50a3      	str	r3, [r4, r2]
+ 8001408:	e7ab      	b.n	8001362 <_malloc_r+0x22>
+ 800140a:	42a3      	cmp	r3, r4
+ 800140c:	6862      	ldr	r2, [r4, #4]
+ 800140e:	d1dd      	bne.n	80013cc <_malloc_r+0x8c>
+ 8001410:	f8c8 2000 	str.w	r2, [r8]
+ 8001414:	e7ec      	b.n	80013f0 <_malloc_r+0xb0>
+ 8001416:	4623      	mov	r3, r4
+ 8001418:	6864      	ldr	r4, [r4, #4]
+ 800141a:	e7ac      	b.n	8001376 <_malloc_r+0x36>
+ 800141c:	4634      	mov	r4, r6
+ 800141e:	6876      	ldr	r6, [r6, #4]
+ 8001420:	e7b4      	b.n	800138c <_malloc_r+0x4c>
+ 8001422:	4613      	mov	r3, r2
+ 8001424:	e7cc      	b.n	80013c0 <_malloc_r+0x80>
+ 8001426:	230c      	movs	r3, #12
+ 8001428:	603b      	str	r3, [r7, #0]
+ 800142a:	4638      	mov	r0, r7
+ 800142c:	f000 f80e 	bl	800144c <__malloc_unlock>
+ 8001430:	e797      	b.n	8001362 <_malloc_r+0x22>
+ 8001432:	6025      	str	r5, [r4, #0]
+ 8001434:	e7dc      	b.n	80013f0 <_malloc_r+0xb0>
+ 8001436:	605b      	str	r3, [r3, #4]
+ 8001438:	deff      	udf	#255	; 0xff
+ 800143a:	bf00      	nop
+ 800143c:	200001c8 	.word	0x200001c8
+
+08001440 <__malloc_lock>:
+ 8001440:	4801      	ldr	r0, [pc, #4]	; (8001448 <__malloc_lock+0x8>)
+ 8001442:	f7ff bf0e 	b.w	8001262 <__retarget_lock_acquire_recursive>
+ 8001446:	bf00      	nop
+ 8001448:	200001c4 	.word	0x200001c4
+
+0800144c <__malloc_unlock>:
+ 800144c:	4801      	ldr	r0, [pc, #4]	; (8001454 <__malloc_unlock+0x8>)
+ 800144e:	f7ff bf09 	b.w	8001264 <__retarget_lock_release_recursive>
+ 8001452:	bf00      	nop
+ 8001454:	200001c4 	.word	0x200001c4
+
+08001458 <__sflush_r>:
+ 8001458:	898a      	ldrh	r2, [r1, #12]
+ 800145a:	e92d 41f0 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
+ 800145e:	4605      	mov	r5, r0
+ 8001460:	0710      	lsls	r0, r2, #28
+ 8001462:	460c      	mov	r4, r1
+ 8001464:	d458      	bmi.n	8001518 <__sflush_r+0xc0>
+ 8001466:	684b      	ldr	r3, [r1, #4]
+ 8001468:	2b00      	cmp	r3, #0
+ 800146a:	dc05      	bgt.n	8001478 <__sflush_r+0x20>
+ 800146c:	6c0b      	ldr	r3, [r1, #64]	; 0x40
+ 800146e:	2b00      	cmp	r3, #0
+ 8001470:	dc02      	bgt.n	8001478 <__sflush_r+0x20>
+ 8001472:	2000      	movs	r0, #0
+ 8001474:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
+ 8001478:	6ae6      	ldr	r6, [r4, #44]	; 0x2c
+ 800147a:	2e00      	cmp	r6, #0
+ 800147c:	d0f9      	beq.n	8001472 <__sflush_r+0x1a>
+ 800147e:	2300      	movs	r3, #0
+ 8001480:	f412 5280 	ands.w	r2, r2, #4096	; 0x1000
+ 8001484:	682f      	ldr	r7, [r5, #0]
+ 8001486:	6a21      	ldr	r1, [r4, #32]
+ 8001488:	602b      	str	r3, [r5, #0]
+ 800148a:	d032      	beq.n	80014f2 <__sflush_r+0x9a>
+ 800148c:	6d60      	ldr	r0, [r4, #84]	; 0x54
+ 800148e:	89a3      	ldrh	r3, [r4, #12]
+ 8001490:	075a      	lsls	r2, r3, #29
+ 8001492:	d505      	bpl.n	80014a0 <__sflush_r+0x48>
+ 8001494:	6863      	ldr	r3, [r4, #4]
+ 8001496:	1ac0      	subs	r0, r0, r3
+ 8001498:	6b63      	ldr	r3, [r4, #52]	; 0x34
+ 800149a:	b10b      	cbz	r3, 80014a0 <__sflush_r+0x48>
+ 800149c:	6c23      	ldr	r3, [r4, #64]	; 0x40
+ 800149e:	1ac0      	subs	r0, r0, r3
+ 80014a0:	2300      	movs	r3, #0
+ 80014a2:	4602      	mov	r2, r0
+ 80014a4:	6ae6      	ldr	r6, [r4, #44]	; 0x2c
+ 80014a6:	6a21      	ldr	r1, [r4, #32]
+ 80014a8:	4628      	mov	r0, r5
+ 80014aa:	47b0      	blx	r6
+ 80014ac:	1c43      	adds	r3, r0, #1
+ 80014ae:	89a3      	ldrh	r3, [r4, #12]
+ 80014b0:	d106      	bne.n	80014c0 <__sflush_r+0x68>
+ 80014b2:	6829      	ldr	r1, [r5, #0]
+ 80014b4:	291d      	cmp	r1, #29
+ 80014b6:	d82b      	bhi.n	8001510 <__sflush_r+0xb8>
+ 80014b8:	4a29      	ldr	r2, [pc, #164]	; (8001560 <__sflush_r+0x108>)
+ 80014ba:	410a      	asrs	r2, r1
+ 80014bc:	07d6      	lsls	r6, r2, #31
+ 80014be:	d427      	bmi.n	8001510 <__sflush_r+0xb8>
+ 80014c0:	2200      	movs	r2, #0
+ 80014c2:	6062      	str	r2, [r4, #4]
+ 80014c4:	04d9      	lsls	r1, r3, #19
+ 80014c6:	6922      	ldr	r2, [r4, #16]
+ 80014c8:	6022      	str	r2, [r4, #0]
+ 80014ca:	d504      	bpl.n	80014d6 <__sflush_r+0x7e>
+ 80014cc:	1c42      	adds	r2, r0, #1
+ 80014ce:	d101      	bne.n	80014d4 <__sflush_r+0x7c>
+ 80014d0:	682b      	ldr	r3, [r5, #0]
+ 80014d2:	b903      	cbnz	r3, 80014d6 <__sflush_r+0x7e>
+ 80014d4:	6560      	str	r0, [r4, #84]	; 0x54
+ 80014d6:	6b61      	ldr	r1, [r4, #52]	; 0x34
+ 80014d8:	602f      	str	r7, [r5, #0]
+ 80014da:	2900      	cmp	r1, #0
+ 80014dc:	d0c9      	beq.n	8001472 <__sflush_r+0x1a>
+ 80014de:	f104 0344 	add.w	r3, r4, #68	; 0x44
+ 80014e2:	4299      	cmp	r1, r3
+ 80014e4:	d002      	beq.n	80014ec <__sflush_r+0x94>
+ 80014e6:	4628      	mov	r0, r5
+ 80014e8:	f7ff febe 	bl	8001268 <_free_r>
+ 80014ec:	2000      	movs	r0, #0
+ 80014ee:	6360      	str	r0, [r4, #52]	; 0x34
+ 80014f0:	e7c0      	b.n	8001474 <__sflush_r+0x1c>
+ 80014f2:	2301      	movs	r3, #1
+ 80014f4:	4628      	mov	r0, r5
+ 80014f6:	47b0      	blx	r6
+ 80014f8:	1c41      	adds	r1, r0, #1
+ 80014fa:	d1c8      	bne.n	800148e <__sflush_r+0x36>
+ 80014fc:	682b      	ldr	r3, [r5, #0]
+ 80014fe:	2b00      	cmp	r3, #0
+ 8001500:	d0c5      	beq.n	800148e <__sflush_r+0x36>
+ 8001502:	2b1d      	cmp	r3, #29
+ 8001504:	d001      	beq.n	800150a <__sflush_r+0xb2>
+ 8001506:	2b16      	cmp	r3, #22
+ 8001508:	d101      	bne.n	800150e <__sflush_r+0xb6>
+ 800150a:	602f      	str	r7, [r5, #0]
+ 800150c:	e7b1      	b.n	8001472 <__sflush_r+0x1a>
+ 800150e:	89a3      	ldrh	r3, [r4, #12]
+ 8001510:	f043 0340 	orr.w	r3, r3, #64	; 0x40
+ 8001514:	81a3      	strh	r3, [r4, #12]
+ 8001516:	e7ad      	b.n	8001474 <__sflush_r+0x1c>
+ 8001518:	690f      	ldr	r7, [r1, #16]
+ 800151a:	2f00      	cmp	r7, #0
+ 800151c:	d0a9      	beq.n	8001472 <__sflush_r+0x1a>
+ 800151e:	0793      	lsls	r3, r2, #30
+ 8001520:	680e      	ldr	r6, [r1, #0]
+ 8001522:	bf08      	it	eq
+ 8001524:	694b      	ldreq	r3, [r1, #20]
+ 8001526:	600f      	str	r7, [r1, #0]
+ 8001528:	bf18      	it	ne
+ 800152a:	2300      	movne	r3, #0
+ 800152c:	eba6 0807 	sub.w	r8, r6, r7
+ 8001530:	608b      	str	r3, [r1, #8]
+ 8001532:	f1b8 0f00 	cmp.w	r8, #0
+ 8001536:	dd9c      	ble.n	8001472 <__sflush_r+0x1a>
+ 8001538:	6a21      	ldr	r1, [r4, #32]
+ 800153a:	6aa6      	ldr	r6, [r4, #40]	; 0x28
+ 800153c:	4643      	mov	r3, r8
+ 800153e:	463a      	mov	r2, r7
+ 8001540:	4628      	mov	r0, r5
+ 8001542:	47b0      	blx	r6
+ 8001544:	2800      	cmp	r0, #0
+ 8001546:	dc06      	bgt.n	8001556 <__sflush_r+0xfe>
+ 8001548:	89a3      	ldrh	r3, [r4, #12]
+ 800154a:	f043 0340 	orr.w	r3, r3, #64	; 0x40
+ 800154e:	81a3      	strh	r3, [r4, #12]
+ 8001550:	f04f 30ff 	mov.w	r0, #4294967295
+ 8001554:	e78e      	b.n	8001474 <__sflush_r+0x1c>
+ 8001556:	4407      	add	r7, r0
+ 8001558:	eba8 0800 	sub.w	r8, r8, r0
+ 800155c:	e7e9      	b.n	8001532 <__sflush_r+0xda>
+ 800155e:	bf00      	nop
+ 8001560:	dfbffffe 	.word	0xdfbffffe
+
+08001564 <_fflush_r>:
+ 8001564:	b538      	push	{r3, r4, r5, lr}
+ 8001566:	690b      	ldr	r3, [r1, #16]
+ 8001568:	4605      	mov	r5, r0
+ 800156a:	460c      	mov	r4, r1
+ 800156c:	b913      	cbnz	r3, 8001574 <_fflush_r+0x10>
+ 800156e:	2500      	movs	r5, #0
+ 8001570:	4628      	mov	r0, r5
+ 8001572:	bd38      	pop	{r3, r4, r5, pc}
+ 8001574:	b118      	cbz	r0, 800157e <_fflush_r+0x1a>
+ 8001576:	6a03      	ldr	r3, [r0, #32]
+ 8001578:	b90b      	cbnz	r3, 800157e <_fflush_r+0x1a>
+ 800157a:	f7ff fc8f 	bl	8000e9c <__sinit>
+ 800157e:	f9b4 300c 	ldrsh.w	r3, [r4, #12]
+ 8001582:	2b00      	cmp	r3, #0
+ 8001584:	d0f3      	beq.n	800156e <_fflush_r+0xa>
+ 8001586:	6e62      	ldr	r2, [r4, #100]	; 0x64
+ 8001588:	07d0      	lsls	r0, r2, #31
+ 800158a:	d404      	bmi.n	8001596 <_fflush_r+0x32>
+ 800158c:	0599      	lsls	r1, r3, #22
+ 800158e:	d402      	bmi.n	8001596 <_fflush_r+0x32>
+ 8001590:	6da0      	ldr	r0, [r4, #88]	; 0x58
+ 8001592:	f7ff fe66 	bl	8001262 <__retarget_lock_acquire_recursive>
+ 8001596:	4628      	mov	r0, r5
+ 8001598:	4621      	mov	r1, r4
+ 800159a:	f7ff ff5d 	bl	8001458 <__sflush_r>
+ 800159e:	6e63      	ldr	r3, [r4, #100]	; 0x64
+ 80015a0:	07da      	lsls	r2, r3, #31
+ 80015a2:	4605      	mov	r5, r0
+ 80015a4:	d4e4      	bmi.n	8001570 <_fflush_r+0xc>
+ 80015a6:	89a3      	ldrh	r3, [r4, #12]
+ 80015a8:	059b      	lsls	r3, r3, #22
+ 80015aa:	d4e1      	bmi.n	8001570 <_fflush_r+0xc>
+ 80015ac:	6da0      	ldr	r0, [r4, #88]	; 0x58
+ 80015ae:	f7ff fe59 	bl	8001264 <__retarget_lock_release_recursive>
+ 80015b2:	e7dd      	b.n	8001570 <_fflush_r+0xc>
+
+080015b4 <__swhatbuf_r>:
+ 80015b4:	b570      	push	{r4, r5, r6, lr}
+ 80015b6:	460c      	mov	r4, r1
+ 80015b8:	f9b1 100e 	ldrsh.w	r1, [r1, #14]
+ 80015bc:	2900      	cmp	r1, #0
+ 80015be:	b096      	sub	sp, #88	; 0x58
+ 80015c0:	4615      	mov	r5, r2
+ 80015c2:	461e      	mov	r6, r3
+ 80015c4:	da0d      	bge.n	80015e2 <__swhatbuf_r+0x2e>
+ 80015c6:	89a3      	ldrh	r3, [r4, #12]
+ 80015c8:	f013 0f80 	tst.w	r3, #128	; 0x80
+ 80015cc:	f04f 0100 	mov.w	r1, #0
+ 80015d0:	bf0c      	ite	eq
+ 80015d2:	f44f 6380 	moveq.w	r3, #1024	; 0x400
+ 80015d6:	2340      	movne	r3, #64	; 0x40
+ 80015d8:	2000      	movs	r0, #0
+ 80015da:	6031      	str	r1, [r6, #0]
+ 80015dc:	602b      	str	r3, [r5, #0]
+ 80015de:	b016      	add	sp, #88	; 0x58
+ 80015e0:	bd70      	pop	{r4, r5, r6, pc}
+ 80015e2:	466a      	mov	r2, sp
+ 80015e4:	f000 f848 	bl	8001678 <_fstat_r>
+ 80015e8:	2800      	cmp	r0, #0
+ 80015ea:	dbec      	blt.n	80015c6 <__swhatbuf_r+0x12>
+ 80015ec:	9901      	ldr	r1, [sp, #4]
+ 80015ee:	f401 4170 	and.w	r1, r1, #61440	; 0xf000
+ 80015f2:	f5a1 5300 	sub.w	r3, r1, #8192	; 0x2000
+ 80015f6:	4259      	negs	r1, r3
+ 80015f8:	4159      	adcs	r1, r3
+ 80015fa:	f44f 6380 	mov.w	r3, #1024	; 0x400
+ 80015fe:	e7eb      	b.n	80015d8 <__swhatbuf_r+0x24>
+
+08001600 <__smakebuf_r>:
+ 8001600:	898b      	ldrh	r3, [r1, #12]
+ 8001602:	b573      	push	{r0, r1, r4, r5, r6, lr}
+ 8001604:	079d      	lsls	r5, r3, #30
+ 8001606:	4606      	mov	r6, r0
+ 8001608:	460c      	mov	r4, r1
+ 800160a:	d507      	bpl.n	800161c <__smakebuf_r+0x1c>
+ 800160c:	f104 0347 	add.w	r3, r4, #71	; 0x47
+ 8001610:	6023      	str	r3, [r4, #0]
+ 8001612:	6123      	str	r3, [r4, #16]
+ 8001614:	2301      	movs	r3, #1
+ 8001616:	6163      	str	r3, [r4, #20]
+ 8001618:	b002      	add	sp, #8
+ 800161a:	bd70      	pop	{r4, r5, r6, pc}
+ 800161c:	ab01      	add	r3, sp, #4
+ 800161e:	466a      	mov	r2, sp
+ 8001620:	f7ff ffc8 	bl	80015b4 <__swhatbuf_r>
+ 8001624:	9900      	ldr	r1, [sp, #0]
+ 8001626:	4605      	mov	r5, r0
+ 8001628:	4630      	mov	r0, r6
+ 800162a:	f7ff fe89 	bl	8001340 <_malloc_r>
+ 800162e:	b948      	cbnz	r0, 8001644 <__smakebuf_r+0x44>
+ 8001630:	f9b4 300c 	ldrsh.w	r3, [r4, #12]
+ 8001634:	059a      	lsls	r2, r3, #22
+ 8001636:	d4ef      	bmi.n	8001618 <__smakebuf_r+0x18>
+ 8001638:	f023 0303 	bic.w	r3, r3, #3
+ 800163c:	f043 0302 	orr.w	r3, r3, #2
+ 8001640:	81a3      	strh	r3, [r4, #12]
+ 8001642:	e7e3      	b.n	800160c <__smakebuf_r+0xc>
+ 8001644:	89a3      	ldrh	r3, [r4, #12]
+ 8001646:	6020      	str	r0, [r4, #0]
+ 8001648:	f043 0380 	orr.w	r3, r3, #128	; 0x80
+ 800164c:	81a3      	strh	r3, [r4, #12]
+ 800164e:	9b00      	ldr	r3, [sp, #0]
+ 8001650:	6163      	str	r3, [r4, #20]
+ 8001652:	9b01      	ldr	r3, [sp, #4]
+ 8001654:	6120      	str	r0, [r4, #16]
+ 8001656:	b15b      	cbz	r3, 8001670 <__smakebuf_r+0x70>
+ 8001658:	f9b4 100e 	ldrsh.w	r1, [r4, #14]
+ 800165c:	4630      	mov	r0, r6
+ 800165e:	f000 f81d 	bl	800169c <_isatty_r>
+ 8001662:	b128      	cbz	r0, 8001670 <__smakebuf_r+0x70>
+ 8001664:	89a3      	ldrh	r3, [r4, #12]
+ 8001666:	f023 0303 	bic.w	r3, r3, #3
+ 800166a:	f043 0301 	orr.w	r3, r3, #1
+ 800166e:	81a3      	strh	r3, [r4, #12]
+ 8001670:	89a3      	ldrh	r3, [r4, #12]
+ 8001672:	431d      	orrs	r5, r3
+ 8001674:	81a5      	strh	r5, [r4, #12]
+ 8001676:	e7cf      	b.n	8001618 <__smakebuf_r+0x18>
+
+08001678 <_fstat_r>:
+ 8001678:	b538      	push	{r3, r4, r5, lr}
+ 800167a:	4d07      	ldr	r5, [pc, #28]	; (8001698 <_fstat_r+0x20>)
+ 800167c:	2300      	movs	r3, #0
+ 800167e:	4604      	mov	r4, r0
+ 8001680:	4608      	mov	r0, r1
+ 8001682:	4611      	mov	r1, r2
+ 8001684:	602b      	str	r3, [r5, #0]
+ 8001686:	f7fe fec6 	bl	8000416 <_fstat>
+ 800168a:	1c43      	adds	r3, r0, #1
+ 800168c:	d102      	bne.n	8001694 <_fstat_r+0x1c>
+ 800168e:	682b      	ldr	r3, [r5, #0]
+ 8001690:	b103      	cbz	r3, 8001694 <_fstat_r+0x1c>
+ 8001692:	6023      	str	r3, [r4, #0]
+ 8001694:	bd38      	pop	{r3, r4, r5, pc}
+ 8001696:	bf00      	nop
+ 8001698:	200001c0 	.word	0x200001c0
+
+0800169c <_isatty_r>:
+ 800169c:	b538      	push	{r3, r4, r5, lr}
+ 800169e:	4d06      	ldr	r5, [pc, #24]	; (80016b8 <_isatty_r+0x1c>)
+ 80016a0:	2300      	movs	r3, #0
+ 80016a2:	4604      	mov	r4, r0
+ 80016a4:	4608      	mov	r0, r1
+ 80016a6:	602b      	str	r3, [r5, #0]
+ 80016a8:	f7fe fec5 	bl	8000436 <_isatty>
+ 80016ac:	1c43      	adds	r3, r0, #1
+ 80016ae:	d102      	bne.n	80016b6 <_isatty_r+0x1a>
+ 80016b0:	682b      	ldr	r3, [r5, #0]
+ 80016b2:	b103      	cbz	r3, 80016b6 <_isatty_r+0x1a>
+ 80016b4:	6023      	str	r3, [r4, #0]
+ 80016b6:	bd38      	pop	{r3, r4, r5, pc}
+ 80016b8:	200001c0 	.word	0x200001c0
+
+080016bc <_sbrk_r>:
+ 80016bc:	b538      	push	{r3, r4, r5, lr}
+ 80016be:	4d06      	ldr	r5, [pc, #24]	; (80016d8 <_sbrk_r+0x1c>)
+ 80016c0:	2300      	movs	r3, #0
+ 80016c2:	4604      	mov	r4, r0
+ 80016c4:	4608      	mov	r0, r1
+ 80016c6:	602b      	str	r3, [r5, #0]
+ 80016c8:	f7fe fece 	bl	8000468 <_sbrk>
+ 80016cc:	1c43      	adds	r3, r0, #1
+ 80016ce:	d102      	bne.n	80016d6 <_sbrk_r+0x1a>
+ 80016d0:	682b      	ldr	r3, [r5, #0]
+ 80016d2:	b103      	cbz	r3, 80016d6 <_sbrk_r+0x1a>
+ 80016d4:	6023      	str	r3, [r4, #0]
+ 80016d6:	bd38      	pop	{r3, r4, r5, pc}
+ 80016d8:	200001c0 	.word	0x200001c0
+
+080016dc <_init>:
+ 80016dc:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 80016de:	bf00      	nop
+ 80016e0:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 80016e2:	bc08      	pop	{r3}
+ 80016e4:	469e      	mov	lr, r3
+ 80016e6:	4770      	bx	lr
+
+080016e8 <_fini>:
+ 80016e8:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 80016ea:	bf00      	nop
+ 80016ec:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 80016ee:	bc08      	pop	{r3}
+ 80016f0:	469e      	mov	lr, r3
+ 80016f2:	4770      	bx	lr
